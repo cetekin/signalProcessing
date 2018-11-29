@@ -51,7 +51,7 @@ background-color: rgb(222, 249, 255);
      <attribute name="title">
       <string>Classification Results</string>
      </attribute>
-     <widget class="QRadioButton" name="radioButton_7">
+     <widget class="QRadioButton" name="rb_lda">
       <property name="geometry">
        <rect>
         <x>200</x>
@@ -64,7 +64,7 @@ background-color: rgb(222, 249, 255);
        <string>LDA</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioButton">
+     <widget class="QRadioButton" name="rb_knn">
       <property name="geometry">
        <rect>
         <x>200</x>
@@ -77,7 +77,7 @@ background-color: rgb(222, 249, 255);
        <string>K-NN</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioButton_5">
+     <widget class="QRadioButton" name="rb_log_reg">
       <property name="geometry">
        <rect>
         <x>200</x>
@@ -90,7 +90,7 @@ background-color: rgb(222, 249, 255);
        <string>Logistic Regression</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioButton_2">
+     <widget class="QRadioButton" name="rb_naive_bayes">
       <property name="geometry">
        <rect>
         <x>200</x>
@@ -122,7 +122,7 @@ font-weight: bold;
        <string>CLASSIFIER</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioButton_6">
+     <widget class="QRadioButton" name="rb_random_forest">
       <property name="geometry">
        <rect>
         <x>200</x>
@@ -135,7 +135,7 @@ font-weight: bold;
        <string>Random Forest</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioButton_4">
+     <widget class="QRadioButton" name="rb_neu_network">
       <property name="geometry">
        <rect>
         <x>200</x>
@@ -148,7 +148,7 @@ font-weight: bold;
        <string>Neural Network</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioButton_3">
+     <widget class="QRadioButton" name="rb_svm">
       <property name="geometry">
        <rect>
         <x>200</x>
@@ -180,7 +180,7 @@ font-weight: bold;
        <string>FEATURES</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox">
+     <widget class="QCheckBox" name="cb_zcr">
       <property name="geometry">
        <rect>
         <x>710</x>
@@ -193,7 +193,7 @@ font-weight: bold;
        <string>Zero Crossing Rate</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_4">
+     <widget class="QCheckBox" name="cb_spec_cen">
       <property name="geometry">
        <rect>
         <x>710</x>
@@ -206,7 +206,7 @@ font-weight: bold;
        <string>Spectral Centroid</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_5">
+     <widget class="QCheckBox" name="cb_rmse">
       <property name="geometry">
        <rect>
         <x>710</x>
@@ -219,7 +219,7 @@ font-weight: bold;
        <string>RMSE</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_2">
+     <widget class="QCheckBox" name="cb_spec_con">
       <property name="geometry">
        <rect>
         <x>710</x>
@@ -232,7 +232,7 @@ font-weight: bold;
        <string>Spectral Contrast</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_3">
+     <widget class="QCheckBox" name="cb_spec_ban">
       <property name="geometry">
        <rect>
         <x>710</x>
@@ -245,7 +245,7 @@ font-weight: bold;
        <string>Spectral Bandwidth</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_8">
+     <widget class="QCheckBox" name="cb_chroma_stft">
       <property name="geometry">
        <rect>
         <x>710</x>
@@ -258,7 +258,7 @@ font-weight: bold;
        <string>Chroma STFT</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_6">
+     <widget class="QCheckBox" name="cb_spec_rollof">
       <property name="geometry">
        <rect>
         <x>710</x>
@@ -271,7 +271,7 @@ font-weight: bold;
        <string>Spectral Rollof</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_7">
+     <widget class="QCheckBox" name="cb_mfcc">
       <property name="geometry">
        <rect>
         <x>710</x>
@@ -295,7 +295,7 @@ font-weight: bold;
       </property>
       <layout class="QGridLayout" name="gridLayout_2"/>
      </widget>
-     <widget class="QLabel" name="genre_label_2">
+     <widget class="QLabel" name="avg_accuracy_label">
       <property name="geometry">
        <rect>
         <x>110</x>
@@ -315,7 +315,7 @@ font-weight: bold;
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; text-decoration: underline;&quot;&gt;ACCURACY&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="con_matrix_label">
       <property name="geometry">
        <rect>
         <x>600</x>
@@ -378,7 +378,7 @@ font-weight: bold;
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;AVG ACCURACY&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QLabel" name="genre_label_3">
+     <widget class="QLabel" name="max_accuracy_label">
       <property name="geometry">
        <rect>
         <x>110</x>
@@ -434,6 +434,19 @@ font-weight: bold;
       </property>
       <property name="text">
        <string>Start Classification</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cb_hpcp">
+      <property name="geometry">
+       <rect>
+        <x>710</x>
+        <y>310</y>
+        <width>111</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>HPCP</string>
       </property>
      </widget>
     </widget>
@@ -599,8 +612,6 @@ background-color:rgb(0, 0, 255);
    </property>
   </action>
  </widget>
- <resources>
-  <include location="export/icn.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

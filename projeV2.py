@@ -18,6 +18,18 @@ import sqlite3
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import winsound
+import pandas as pd
+from sklearn import model_selection, preprocessing, metrics
+from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.cluster import KMeans
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import confusion_matrix
 
 
 #qt designer baslangic
@@ -38,199 +50,148 @@ class Ui_MainWindow(object):
 "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 40, 361, 361))
-        self.gridLayoutWidget.setObjectName("gridLayoutWidget")
-        self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.gridLayout.setObjectName("gridLayout")
-        self.music_list = QtWidgets.QListWidget(self.gridLayoutWidget)
-        self.music_list.setStyleSheet("background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:0, y2:0, stop:0 rgba(181, 146, 186, 255), stop:1 rgba(255, 255, 255, 255))\n"
-"\n"
-"\n"
-"")
-        self.music_list.setObjectName("music_list")
-        self.gridLayout.addWidget(self.music_list, 0, 0, 1, 1)
-        self.start_classification_button = QtWidgets.QPushButton(self.centralwidget)
-        self.start_classification_button.setGeometry(QtCore.QRect(390, 430, 141, 31))
+        self.tab_screen = QtWidgets.QTabWidget(self.centralwidget)
+        self.tab_screen.setGeometry(QtCore.QRect(0, 0, 1051, 931))
+        self.tab_screen.setStyleSheet("background-color: rgb(222, 249, 255);")
+        self.tab_screen.setObjectName("tab_screen")
+        self.tab_screen_1 = QtWidgets.QWidget()
+        self.tab_screen_1.setObjectName("tab_screen_1")
+        self.rb_lda = QtWidgets.QRadioButton(self.tab_screen_1)
+        self.rb_lda.setGeometry(QtCore.QRect(200, 250, 95, 20))
+        self.rb_lda.setObjectName("rb_lda")
+        self.rb_knn = QtWidgets.QRadioButton(self.tab_screen_1)
+        self.rb_knn.setGeometry(QtCore.QRect(200, 70, 95, 20))
+        self.rb_knn.setObjectName("rb_knn")
+        self.rb_log_reg = QtWidgets.QRadioButton(self.tab_screen_1)
+        self.rb_log_reg.setGeometry(QtCore.QRect(200, 220, 141, 20))
+        self.rb_log_reg.setObjectName("rb_log_reg")
+        self.rb_naive_bayes = QtWidgets.QRadioButton(self.tab_screen_1)
+        self.rb_naive_bayes.setGeometry(QtCore.QRect(200, 100, 95, 20))
+        self.rb_naive_bayes.setObjectName("rb_naive_bayes")
+        self.label_5 = QtWidgets.QLabel(self.tab_screen_1)
+        self.label_5.setGeometry(QtCore.QRect(200, 30, 91, 31))
+        self.label_5.setStyleSheet("QLabel {\n"
+"color: black;\n"
+"font-weight: bold;\n"
+"}")
+        self.label_5.setObjectName("label_5")
+        self.rb_random_forest = QtWidgets.QRadioButton(self.tab_screen_1)
+        self.rb_random_forest.setGeometry(QtCore.QRect(200, 160, 121, 20))
+        self.rb_random_forest.setObjectName("rb_random_forest")
+        self.rb_neu_network = QtWidgets.QRadioButton(self.tab_screen_1)
+        self.rb_neu_network.setGeometry(QtCore.QRect(200, 190, 131, 20))
+        self.rb_neu_network.setObjectName("rb_neu_network")
+        self.rb_svm = QtWidgets.QRadioButton(self.tab_screen_1)
+        self.rb_svm.setGeometry(QtCore.QRect(200, 130, 95, 20))
+        self.rb_svm.setObjectName("rb_svm")
+        self.label_4 = QtWidgets.QLabel(self.tab_screen_1)
+        self.label_4.setGeometry(QtCore.QRect(710, 30, 91, 31))
+        self.label_4.setStyleSheet("QLabel {\n"
+"color: black;\n"
+"font-weight: bold;\n"
+"}")
+        self.label_4.setObjectName("label_4")
+        self.cb_zcr = QtWidgets.QCheckBox(self.tab_screen_1)
+        self.cb_zcr.setGeometry(QtCore.QRect(710, 70, 141, 20))
+        self.cb_zcr.setObjectName("cb_zcr")
+        self.cb_spec_cen = QtWidgets.QCheckBox(self.tab_screen_1)
+        self.cb_spec_cen.setGeometry(QtCore.QRect(710, 100, 131, 20))
+        self.cb_spec_cen.setObjectName("cb_spec_cen")
+        self.cb_rmse = QtWidgets.QCheckBox(self.tab_screen_1)
+        self.cb_rmse.setGeometry(QtCore.QRect(710, 220, 81, 20))
+        self.cb_rmse.setObjectName("cb_rmse")
+        self.cb_spec_con = QtWidgets.QCheckBox(self.tab_screen_1)
+        self.cb_spec_con.setGeometry(QtCore.QRect(710, 160, 131, 20))
+        self.cb_spec_con.setObjectName("cb_spec_con")
+        self.cb_spec_ban = QtWidgets.QCheckBox(self.tab_screen_1)
+        self.cb_spec_ban.setGeometry(QtCore.QRect(710, 130, 141, 20))
+        self.cb_spec_ban.setObjectName("cb_spec_ban")
+        self.cb_chroma_stft = QtWidgets.QCheckBox(self.tab_screen_1)
+        self.cb_chroma_stft.setGeometry(QtCore.QRect(710, 280, 111, 20))
+        self.cb_chroma_stft.setObjectName("cb_chroma_stft")
+        self.cb_spec_rollof = QtWidgets.QCheckBox(self.tab_screen_1)
+        self.cb_spec_rollof.setGeometry(QtCore.QRect(710, 190, 111, 20))
+        self.cb_spec_rollof.setObjectName("cb_spec_rollof")
+        self.cb_mfcc = QtWidgets.QCheckBox(self.tab_screen_1)
+        self.cb_mfcc.setGeometry(QtCore.QRect(710, 250, 81, 20))
+        self.cb_mfcc.setObjectName("cb_mfcc")
+        self.gridLayoutWidget_2 = QtWidgets.QWidget(self.tab_screen_1)
+        self.gridLayoutWidget_2.setGeometry(QtCore.QRect(-1, -1, 2, 2))
+        self.gridLayoutWidget_2.setObjectName("gridLayoutWidget_2")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.gridLayoutWidget_2)
+        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.avg_accuracy_label = QtWidgets.QLabel(self.tab_screen_1)
+        self.avg_accuracy_label.setGeometry(QtCore.QRect(110, 480, 271, 71))
+        self.avg_accuracy_label.setStyleSheet("QLabel{\n"
+"color: rgb(255, 255, 255);\n"
+"background-color:rgb(0, 0, 255);\n"
+"font-weight: bold;\n"
+"}")
+        self.avg_accuracy_label.setObjectName("avg_accuracy_label")
+        self.con_matrix_label = QtWidgets.QLabel(self.tab_screen_1)
+        self.con_matrix_label.setGeometry(QtCore.QRect(600, 450, 347, 297))
+        self.con_matrix_label.setMinimumSize(QtCore.QSize(347, 297))
+        self.con_matrix_label.setMaximumSize(QtCore.QSize(444, 397))
+        self.con_matrix_label.setText("")
+        self.con_matrix_label.setObjectName("con_matrix_label")
+        self.label_6 = QtWidgets.QLabel(self.tab_screen_1)
+        self.label_6.setGeometry(QtCore.QRect(710, 400, 131, 31))
+        self.label_6.setStyleSheet("QLabel {\n"
+"color: black;\n"
+"font-weight: bold;\n"
+"}")
+        self.label_6.setObjectName("label_6")
+        self.label_7 = QtWidgets.QLabel(self.tab_screen_1)
+        self.label_7.setGeometry(QtCore.QRect(190, 440, 131, 31))
+        self.label_7.setStyleSheet("QLabel {\n"
+"color: black;\n"
+"font-weight: bold;\n"
+"}")
+        self.label_7.setObjectName("label_7")
+        self.max_accuracy_label = QtWidgets.QLabel(self.tab_screen_1)
+        self.max_accuracy_label.setGeometry(QtCore.QRect(110, 650, 271, 71))
+        self.max_accuracy_label.setStyleSheet("QLabel{\n"
+"color: rgb(255, 255, 255);\n"
+"background-color:rgb(0, 0, 255);\n"
+"font-weight: bold;\n"
+"}")
+        self.max_accuracy_label.setObjectName("max_accuracy_label")
+        self.label_8 = QtWidgets.QLabel(self.tab_screen_1)
+        self.label_8.setGeometry(QtCore.QRect(190, 610, 131, 31))
+        self.label_8.setStyleSheet("QLabel {\n"
+"color: black;\n"
+"font-weight: bold;\n"
+"}")
+        self.label_8.setObjectName("label_8")
+        self.start_classification_button = QtWidgets.QPushButton(self.tab_screen_1)
+        self.start_classification_button.setGeometry(QtCore.QRect(420, 270, 151, 51))
         self.start_classification_button.setStyleSheet("QPushButton{\n"
 "background-color: rgb(142, 157, 255);\n"
 "font-weight: bold;\n"
 "}")
         self.start_classification_button.setObjectName("start_classification_button")
-        self.play_button = QtWidgets.QPushButton(self.centralwidget)
-        self.play_button.setGeometry(QtCore.QRect(10, 410, 161, 31))
-        self.play_button.setStyleSheet("QPushButton{\n"
-"font-weight: bold;\n"
-"background-color: rgb(57, 255, 47)\n"
-"}")
-        self.play_button.setObjectName("play_button")
-        self.pause_button = QtWidgets.QPushButton(self.centralwidget)
-        self.pause_button.setGeometry(QtCore.QRect(190, 410, 161, 31))
-        self.pause_button.setStyleSheet("QPushButton{\n"
-"font-weight: bold;\n"
-"background-color: rgb(255, 83, 83);\n"
-"}")
-        self.pause_button.setObjectName("pause_button")
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(140, 10, 91, 31))
-        self.label_2.setStyleSheet("QLabel {\n"
-"color: black;\n"
-"font-weight: bold;\n"
-"}")
-        self.label_2.setObjectName("label_2")
-        self.feature_table = QtWidgets.QTableWidget(self.centralwidget)
-        self.feature_table.setGeometry(QtCore.QRect(10, 570, 1011, 251))
-        self.feature_table.setStyleSheet("background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:0, y2:0, stop:0 rgba(181, 146, 186, 255), stop:1 rgba(255, 255, 255, 255))")
-        self.feature_table.setObjectName("feature_table")
-        self.feature_table.setColumnCount(45)
-        self.feature_table.setRowCount(0)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(4, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(5, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(6, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(7, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(8, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(9, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(10, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(11, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(12, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(13, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(14, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(15, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(16, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(17, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(18, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(19, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(20, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(21, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(22, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(23, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(24, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(25, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(26, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(27, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(28, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(29, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(30, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(31, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(32, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(33, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(34, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(35, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(36, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(37, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(38, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(39, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(40, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(41, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(42, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(43, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.feature_table.setHorizontalHeaderItem(44, item)
-        self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(430, 530, 101, 41))
-        self.label_3.setStyleSheet("QLabel {\n"
-"color: black;\n"
-"font-weight: bold;\n"
-"}")
-        self.label_3.setObjectName("label_3")
-        self.checkBox = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox.setGeometry(QtCore.QRect(400, 50, 141, 20))
-        self.checkBox.setObjectName("checkBox")
-        self.checkBox_2 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_2.setGeometry(QtCore.QRect(400, 110, 131, 20))
-        self.checkBox_2.setObjectName("checkBox_2")
-        self.checkBox_3 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_3.setGeometry(QtCore.QRect(400, 90, 141, 20))
-        self.checkBox_3.setObjectName("checkBox_3")
-        self.checkBox_4 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_4.setGeometry(QtCore.QRect(400, 70, 131, 20))
-        self.checkBox_4.setObjectName("checkBox_4")
-        self.checkBox_5 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_5.setGeometry(QtCore.QRect(400, 150, 81, 20))
-        self.checkBox_5.setObjectName("checkBox_5")
-        self.checkBox_6 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_6.setGeometry(QtCore.QRect(400, 130, 111, 20))
-        self.checkBox_6.setObjectName("checkBox_6")
-        self.checkBox_7 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_7.setGeometry(QtCore.QRect(400, 170, 81, 20))
-        self.checkBox_7.setObjectName("checkBox_7")
-        self.checkBox_8 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_8.setGeometry(QtCore.QRect(400, 190, 111, 20))
-        self.checkBox_8.setObjectName("checkBox_8")
-        self.tab_screen = QtWidgets.QTabWidget(self.centralwidget)
-        self.tab_screen.setGeometry(QtCore.QRect(600, 10, 411, 531))
-        self.tab_screen.setStyleSheet("background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:0, y2:0, stop:0 rgba(181, 146, 186, 255), stop:1 rgba(255, 255, 255, 255))\n"
-"")
-        self.tab_screen.setObjectName("tab_screen")
-        self.tab_screen_1 = QtWidgets.QWidget()
-        self.tab_screen_1.setObjectName("tab_screen_1")
+        self.cb_hpcp = QtWidgets.QCheckBox(self.tab_screen_1)
+        self.cb_hpcp.setGeometry(QtCore.QRect(710, 310, 111, 20))
+        self.cb_hpcp.setObjectName("cb_hpcp")
         self.tab_screen.addTab(self.tab_screen_1, "")
         self.tab_screen_2 = QtWidgets.QWidget()
         self.tab_screen_2.setObjectName("tab_screen_2")
         self.waveplot_label = QtWidgets.QLabel(self.tab_screen_2)
-        self.waveplot_label.setGeometry(QtCore.QRect(20, 10, 386, 278))
+        self.waveplot_label.setGeometry(QtCore.QRect(320, 110, 386, 278))
         self.waveplot_label.setMinimumSize(QtCore.QSize(386, 278))
         self.waveplot_label.setMaximumSize(QtCore.QSize(386, 278))
         self.waveplot_label.setText("")
         self.waveplot_label.setObjectName("waveplot_label")
         self.start_genre_classification = QtWidgets.QPushButton(self.tab_screen_2)
-        self.start_genre_classification.setGeometry(QtCore.QRect(130, 320, 151, 31))
+        self.start_genre_classification.setGeometry(QtCore.QRect(430, 60, 151, 31))
         self.start_genre_classification.setStyleSheet("QPushButton{\n"
 "background-color: rgb(142, 157, 255);\n"
 "font-weight: bold;\n"
 "}")
         self.start_genre_classification.setObjectName("start_genre_classification")
         self.genre_label = QtWidgets.QLabel(self.tab_screen_2)
-        self.genre_label.setGeometry(QtCore.QRect(130, 470, 161, 20))
+        self.genre_label.setGeometry(QtCore.QRect(380, 590, 271, 71))
         self.genre_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
@@ -238,71 +199,28 @@ class Ui_MainWindow(object):
 "}")
         self.genre_label.setObjectName("genre_label")
         self.genre_play_button = QtWidgets.QPushButton(self.tab_screen_2)
-        self.genre_play_button.setGeometry(QtCore.QRect(120, 410, 81, 31))
+        self.genre_play_button.setGeometry(QtCore.QRect(430, 450, 81, 31))
         self.genre_play_button.setStyleSheet("QPushButton{\n"
 "font-weight: bold;\n"
 "background-color: rgb(57, 255, 47)\n"
 "}")
         self.genre_play_button.setObjectName("genre_play_button")
         self.genre_pause_button = QtWidgets.QPushButton(self.tab_screen_2)
-        self.genre_pause_button.setGeometry(QtCore.QRect(210, 410, 81, 31))
+        self.genre_pause_button.setGeometry(QtCore.QRect(530, 450, 81, 31))
         self.genre_pause_button.setStyleSheet("QPushButton{\n"
 "font-weight: bold;\n"
 "background-color: rgb(255, 83, 83);\n"
 "}")
         self.genre_pause_button.setObjectName("genre_pause_button")
         self.genre_music_name_label = QtWidgets.QLabel(self.tab_screen_2)
-        self.genre_music_name_label.setGeometry(QtCore.QRect(20, 370, 371, 20))
+        self.genre_music_name_label.setGeometry(QtCore.QRect(340, 410, 371, 20))
         self.genre_music_name_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
 "}")
         self.genre_music_name_label.setObjectName("genre_music_name_label")
         self.tab_screen.addTab(self.tab_screen_2, "")
-        self.label_4 = QtWidgets.QLabel(self.centralwidget)
-        self.label_4.setGeometry(QtCore.QRect(410, 10, 91, 31))
-        self.label_4.setStyleSheet("QLabel {\n"
-"color: black;\n"
-"font-weight: bold;\n"
-"}")
-        self.label_4.setObjectName("label_4")
-        self.label_5 = QtWidgets.QLabel(self.centralwidget)
-        self.label_5.setGeometry(QtCore.QRect(410, 230, 91, 31))
-        self.label_5.setStyleSheet("QLabel {\n"
-"color: black;\n"
-"font-weight: bold;\n"
-"}")
-        self.label_5.setObjectName("label_5")
-        self.radioButton = QtWidgets.QRadioButton(self.centralwidget)
-        self.radioButton.setGeometry(QtCore.QRect(400, 270, 95, 20))
-        self.radioButton.setObjectName("radioButton")
-        self.radioButton_2 = QtWidgets.QRadioButton(self.centralwidget)
-        self.radioButton_2.setGeometry(QtCore.QRect(400, 290, 95, 20))
-        self.radioButton_2.setObjectName("radioButton_2")
-        self.radioButton_3 = QtWidgets.QRadioButton(self.centralwidget)
-        self.radioButton_3.setGeometry(QtCore.QRect(400, 310, 95, 20))
-        self.radioButton_3.setObjectName("radioButton_3")
-        self.radioButton_4 = QtWidgets.QRadioButton(self.centralwidget)
-        self.radioButton_4.setGeometry(QtCore.QRect(400, 350, 131, 20))
-        self.radioButton_4.setObjectName("radioButton_4")
-        self.radioButton_5 = QtWidgets.QRadioButton(self.centralwidget)
-        self.radioButton_5.setGeometry(QtCore.QRect(400, 370, 141, 20))
-        self.radioButton_5.setObjectName("radioButton_5")
-        self.radioButton_6 = QtWidgets.QRadioButton(self.centralwidget)
-        self.radioButton_6.setGeometry(QtCore.QRect(400, 330, 121, 20))
-        self.radioButton_6.setObjectName("radioButton_6")
-        self.radioButton_7 = QtWidgets.QRadioButton(self.centralwidget)
-        self.radioButton_7.setGeometry(QtCore.QRect(400, 390, 95, 20))
-        self.radioButton_7.setObjectName("radioButton_7")
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 1032, 26))
-        self.menuBar.setObjectName("menuBar")
-        self.menuImport_music = QtWidgets.QMenu(self.menuBar)
-        self.menuImport_music.setObjectName("menuImport_music")
-        self.menuDatabase_Preferences = QtWidgets.QMenu(self.menuImport_music)
-        self.menuDatabase_Preferences.setObjectName("menuDatabase_Preferences")
-        MainWindow.setMenuBar(self.menuBar)
         self.import_file = QtWidgets.QAction(MainWindow)
         self.import_file.setObjectName("import_file")
         self.actionZero_Crossing_Rate = QtWidgets.QAction(MainWindow)
@@ -316,141 +234,45 @@ class Ui_MainWindow(object):
         self.create_new_db_action = QtWidgets.QAction(MainWindow)
         self.create_new_db_action.setCheckable(False)
         self.create_new_db_action.setObjectName("create_new_db_action")
-        self.menuDatabase_Preferences.addSeparator()
-        self.menuDatabase_Preferences.addAction(self.use_existing_db_action)
-        self.menuDatabase_Preferences.addAction(self.create_new_db_action)
-        self.menuImport_music.addAction(self.import_music_file_action)
-        self.menuImport_music.addAction(self.menuDatabase_Preferences.menuAction())
-        self.menuBar.addAction(self.menuImport_music.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tab_screen.setCurrentIndex(1)
+        self.tab_screen.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Music Genre Classification"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.rb_lda.setText(_translate("MainWindow", "LDA"))
+        self.rb_knn.setText(_translate("MainWindow", "K-NN"))
+        self.rb_log_reg.setText(_translate("MainWindow", "Logistic Regression"))
+        self.rb_naive_bayes.setText(_translate("MainWindow", "Naive Bayes"))
+        self.label_5.setText(_translate("MainWindow", "CLASSIFIER"))
+        self.rb_random_forest.setText(_translate("MainWindow", "Random Forest"))
+        self.rb_neu_network.setText(_translate("MainWindow", "Neural Network"))
+        self.rb_svm.setText(_translate("MainWindow", "SVM"))
+        self.label_4.setText(_translate("MainWindow", "FEATURES"))
+        self.cb_zcr.setText(_translate("MainWindow", "Zero Crossing Rate"))
+        self.cb_spec_cen.setText(_translate("MainWindow", "Spectral Centroid"))
+        self.cb_rmse.setText(_translate("MainWindow", "RMSE"))
+        self.cb_spec_con.setText(_translate("MainWindow", "Spectral Contrast"))
+        self.cb_spec_ban.setText(_translate("MainWindow", "Spectral Bandwidth"))
+        self.cb_chroma_stft.setText(_translate("MainWindow", "Chroma STFT"))
+        self.cb_spec_rollof.setText(_translate("MainWindow", "Spectral Rollof"))
+        self.cb_mfcc.setText(_translate("MainWindow", "MFCC"))
+        self.avg_accuracy_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">ACCURACY</span></p></body></html>"))
+        self.label_6.setText(_translate("MainWindow", "<html><head/><body><p>CONFUSION MATRIX</p></body></html>"))
+        self.label_7.setText(_translate("MainWindow", "<html><head/><body><p>AVG ACCURACY</p></body></html>"))
+        self.max_accuracy_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">ACCURACY</span></p></body></html>"))
+        self.label_8.setText(_translate("MainWindow", "<html><head/><body><p>MAX ACCURACY</p></body></html>"))
         self.start_classification_button.setText(_translate("MainWindow", "Start Classification"))
-        self.play_button.setText(_translate("MainWindow", "PLAY"))
-        self.pause_button.setText(_translate("MainWindow", "STOP"))
-        self.label_2.setText(_translate("MainWindow", "MUSIC FILES"))
-        item = self.feature_table.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "song_name"))
-        item = self.feature_table.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "avg_zero_crs_rate"))
-        item = self.feature_table.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "var_zero_crs_rate"))
-        item = self.feature_table.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "avg_spec_centroid"))
-        item = self.feature_table.horizontalHeaderItem(4)
-        item.setText(_translate("MainWindow", "var_spec_centroid"))
-        item = self.feature_table.horizontalHeaderItem(5)
-        item.setText(_translate("MainWindow", "avg_spec_bandwidth"))
-        item = self.feature_table.horizontalHeaderItem(6)
-        item.setText(_translate("MainWindow", "var_spec_bandwidth"))
-        item = self.feature_table.horizontalHeaderItem(7)
-        item.setText(_translate("MainWindow", "avg_spec_contrast"))
-        item = self.feature_table.horizontalHeaderItem(8)
-        item.setText(_translate("MainWindow", "var_spec_contrast"))
-        item = self.feature_table.horizontalHeaderItem(9)
-        item.setText(_translate("MainWindow", "avg_spec_rolloff"))
-        item = self.feature_table.horizontalHeaderItem(10)
-        item.setText(_translate("MainWindow", "var_spec_rolloff"))
-        item = self.feature_table.horizontalHeaderItem(11)
-        item.setText(_translate("MainWindow", "avg_rmse"))
-        item = self.feature_table.horizontalHeaderItem(12)
-        item.setText(_translate("MainWindow", "var_rmse"))
-        item = self.feature_table.horizontalHeaderItem(13)
-        item.setText(_translate("MainWindow", "avg_mfcc_1"))
-        item = self.feature_table.horizontalHeaderItem(14)
-        item.setText(_translate("MainWindow", "avg_mfcc_2"))
-        item = self.feature_table.horizontalHeaderItem(15)
-        item.setText(_translate("MainWindow", "avg_mfcc_3"))
-        item = self.feature_table.horizontalHeaderItem(16)
-        item.setText(_translate("MainWindow", "avg_mfcc_4"))
-        item = self.feature_table.horizontalHeaderItem(17)
-        item.setText(_translate("MainWindow", "avg_mfcc_5"))
-        item = self.feature_table.horizontalHeaderItem(18)
-        item.setText(_translate("MainWindow", "avg_mfcc_6"))
-        item = self.feature_table.horizontalHeaderItem(19)
-        item.setText(_translate("MainWindow", "avg_mfcc_7"))
-        item = self.feature_table.horizontalHeaderItem(20)
-        item.setText(_translate("MainWindow", "avg_mfcc_8"))
-        item = self.feature_table.horizontalHeaderItem(21)
-        item.setText(_translate("MainWindow", "avg_mfcc_9"))
-        item = self.feature_table.horizontalHeaderItem(22)
-        item.setText(_translate("MainWindow", "avg_mfcc_10"))
-        item = self.feature_table.horizontalHeaderItem(23)
-        item.setText(_translate("MainWindow", "avg_mfcc_11"))
-        item = self.feature_table.horizontalHeaderItem(24)
-        item.setText(_translate("MainWindow", "avg_mfcc_12"))
-        item = self.feature_table.horizontalHeaderItem(25)
-        item.setText(_translate("MainWindow", "avg_mfcc_13"))
-        item = self.feature_table.horizontalHeaderItem(26)
-        item.setText(_translate("MainWindow", "avg_mfcc_14"))
-        item = self.feature_table.horizontalHeaderItem(27)
-        item.setText(_translate("MainWindow", "avg_mfcc_15"))
-        item = self.feature_table.horizontalHeaderItem(28)
-        item.setText(_translate("MainWindow", "avg_mfcc_16"))
-        item = self.feature_table.horizontalHeaderItem(29)
-        item.setText(_translate("MainWindow", "avg_mfcc_17"))
-        item = self.feature_table.horizontalHeaderItem(30)
-        item.setText(_translate("MainWindow", "avg_mfcc_18"))
-        item = self.feature_table.horizontalHeaderItem(31)
-        item.setText(_translate("MainWindow", "avg_mfcc_19"))
-        item = self.feature_table.horizontalHeaderItem(32)
-        item.setText(_translate("MainWindow", "avg_mfcc_20"))
-        item = self.feature_table.horizontalHeaderItem(33)
-        item.setText(_translate("MainWindow", "avg_chroma_stft_1"))
-        item = self.feature_table.horizontalHeaderItem(34)
-        item.setText(_translate("MainWindow", "avg_chroma_stft_2"))
-        item = self.feature_table.horizontalHeaderItem(35)
-        item.setText(_translate("MainWindow", "avg_chroma_stft_3"))
-        item = self.feature_table.horizontalHeaderItem(36)
-        item.setText(_translate("MainWindow", "avg_chroma_stft_4"))
-        item = self.feature_table.horizontalHeaderItem(37)
-        item.setText(_translate("MainWindow", "avg_chroma_stft_5"))
-        item = self.feature_table.horizontalHeaderItem(38)
-        item.setText(_translate("MainWindow", "avg_chroma_stft_6"))
-        item = self.feature_table.horizontalHeaderItem(39)
-        item.setText(_translate("MainWindow", "avg_chroma_stft_7"))
-        item = self.feature_table.horizontalHeaderItem(40)
-        item.setText(_translate("MainWindow", "avg_chroma_stft_8"))
-        item = self.feature_table.horizontalHeaderItem(41)
-        item.setText(_translate("MainWindow", "avg_chroma_stft_9"))
-        item = self.feature_table.horizontalHeaderItem(42)
-        item.setText(_translate("MainWindow", "avg_chroma_stft_10"))
-        item = self.feature_table.horizontalHeaderItem(43)
-        item.setText(_translate("MainWindow", "avg_chroma_stft_11"))
-        item = self.feature_table.horizontalHeaderItem(44)
-        item.setText(_translate("MainWindow", "avg_chroma_stft_12"))
-        self.label_3.setText(_translate("MainWindow", "FEATURE TABLE"))
-        self.checkBox.setText(_translate("MainWindow", "Zero Crossing Rate"))
-        self.checkBox_2.setText(_translate("MainWindow", "Spectral Contrast"))
-        self.checkBox_3.setText(_translate("MainWindow", "Spectral Bandwidth"))
-        self.checkBox_4.setText(_translate("MainWindow", "Spectral Centroid"))
-        self.checkBox_5.setText(_translate("MainWindow", "RMSE"))
-        self.checkBox_6.setText(_translate("MainWindow", "Spectral Rollof"))
-        self.checkBox_7.setText(_translate("MainWindow", "MFCC"))
-        self.checkBox_8.setText(_translate("MainWindow", "Chroma STFT"))
+        self.cb_hpcp.setText(_translate("MainWindow", "HPCP"))
         self.tab_screen.setTabText(self.tab_screen.indexOf(self.tab_screen_1), _translate("MainWindow", "Classification Results"))
         self.start_genre_classification.setText(_translate("MainWindow", "Import Music File"))
-        self.genre_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" text-decoration: underline;\">ESTIMATED GENRE</span></p></body></html>"))
+        self.genre_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">ESTIMATED GENRE</span></p></body></html>"))
         self.genre_play_button.setText(_translate("MainWindow", "PLAY"))
         self.genre_pause_button.setText(_translate("MainWindow", "STOP"))
         self.genre_music_name_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">NAME OF THE MUSIC</p></body></html>"))
         self.tab_screen.setTabText(self.tab_screen.indexOf(self.tab_screen_2), _translate("MainWindow", "Genre Estimation"))
-        self.label_4.setText(_translate("MainWindow", "FEATURES"))
-        self.label_5.setText(_translate("MainWindow", "CLASSIFIER"))
-        self.radioButton.setText(_translate("MainWindow", "K-NN"))
-        self.radioButton_2.setText(_translate("MainWindow", "Naive Bayes"))
-        self.radioButton_3.setText(_translate("MainWindow", "SVM"))
-        self.radioButton_4.setText(_translate("MainWindow", "Neural Network"))
-        self.radioButton_5.setText(_translate("MainWindow", "Logistic Regression"))
-        self.radioButton_6.setText(_translate("MainWindow", "Random Forest"))
-        self.radioButton_7.setText(_translate("MainWindow", "LDA"))
-        self.menuImport_music.setTitle(_translate("MainWindow", "Actions"))
-        self.menuDatabase_Preferences.setTitle(_translate("MainWindow", "Database Preferences"))
         self.import_file.setText(_translate("MainWindow", "Import Music"))
         self.actionZero_Crossing_Rate.setText(_translate("MainWindow", "Zero Crossing Rate"))
         self.import_music_file_action.setText(_translate("MainWindow", "Import Music File/s"))
@@ -460,14 +282,8 @@ class Ui_MainWindow(object):
 
         #qt designer bitis
 
-        self.import_music_file_action.triggered.connect(self.import_music)
-        self.create_new_db_action.triggered.connect(self.create_db_table)
-        self.use_existing_db_action.triggered.connect(self.use_existing_table)
-        self.play_button.setEnabled(False)
-        self.pause_button.setEnabled(False)
-        self.music_list.itemClicked.connect(self.enable_button)
-        self.play_button.clicked.connect(self.play_music)
-        self.pause_button.clicked.connect(self.pause_music)
+
+        self.start_classification_button.clicked.connect(self.start_classification)
         self.start_genre_classification.clicked.connect(self.estimate_music_genre)
         self.genre_play_button.clicked.connect(self.genre_play_music)
         self.genre_pause_button.clicked.connect(self.pause_music)
@@ -496,11 +312,6 @@ class Ui_MainWindow(object):
 
 
 
-    def enable_button(self):
-        self.play_button.setEnabled(True)
-        self.pause_button.setEnabled(True)
-
-
 
     def play_music(self):
         directory = self.music_directory[self.music_list.currentItem().text()]
@@ -511,14 +322,14 @@ class Ui_MainWindow(object):
         winsound.PlaySound(None, winsound.SND_PURGE)
 
 
-
+    """
     def write_features_to_feature_table(self,feature_list,music_name):
         numRows = self.feature_table.rowCount()
         self.feature_table.insertRow(numRows)
         self.feature_table.setItem(numRows, 0, QtWidgets.QTableWidgetItem(music_name))
         for i in range(44):
             self.feature_table.setItem(numRows, i+1, QtWidgets.QTableWidgetItem(str(feature_list[i]) ) )
-
+    """
 
 
 
@@ -604,7 +415,9 @@ class Ui_MainWindow(object):
             self.waveplot_label.setPixmap(QtGui.QPixmap('fig2.png').scaled(371, 181, QtCore.Qt.KeepAspectRatioByExpanding, QtCore.Qt.SmoothTransformation))
             plt.clf()
 
-    def write_features_to_database(self,feature_list,s_name,db_conn): #Write given feature list of a specific song to the database
+
+    #Write given feature list of a specific song to the database
+    def write_features_to_database(self,feature_list,s_name,db_conn):
         db_cursor = db_conn.cursor()
 
         db_cursor.execute('''
@@ -711,6 +524,55 @@ class Ui_MainWindow(object):
 
     def use_existing_table(self):
         self.db_name = "data.db"
+
+
+    def start_classification(self):
+        database_features = self.get_user_selected_features()
+
+
+
+
+
+
+    def get_user_selected_features(self):
+        db_con = sqlite3.connect("data.db")
+
+        if self.cb_zcr.isChecked() == True:
+            cols = cols + "avg_zero_crs_rate,var_zero_crs_rate,med_zero_crs_rate,"
+        if self.cb_spec_cen.isChecked() == True:
+            cols = cols + "avg_spec_centroid,var_spec_centroid,med_spec_centroid,"
+        if self.cb_spec_ban.isChecked() == True:
+            cols = cols + "avg_spec_bandwidth,var_spec_bandwidth,med_spec_bandwidth,"
+        if self.cb_spec_con.isChecked() == True:
+            cols = cols + "avg_spec_contrast,var_spec_contrast,med_spec_contrast,"
+        if self.cb_spec_rollof.isChecked() == True:
+            cols = cols + "avg_spec_rolloff,var_spec_rolloff,med_spec_rolloff,"
+        if self.cb_rmse.isChecked() == True:
+            cols = cols + "avg_rmse,var_rmse,med_rmse"
+
+        if self.cb_mfcc.isChecked() == True:
+            for i in range(1,21):
+                cols = cols + "avg_mfcc_" + str(i) + ","
+
+        if self.cb_chroma_stft.isChecked() == True:
+            for i in range(1,13):
+                cols = cols + "avg_chroma_stft_" + str(i) + ","
+
+        if self.cb_hpcp.isChecked() == True:
+            for i in range(1,13):
+                cols = cols + "avg_hpcp_" + str(i) + ","
+
+        cols = cols[0:-1]
+
+        query = "SELECT " + cols + " FROM songs"
+        database_features = pd.read_sql(sql=query, con=db_con)
+
+
+        #print(database_features)
+        db_con.close()
+        return database_features
+
+
 
 
 
