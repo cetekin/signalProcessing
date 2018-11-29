@@ -45,12 +45,8 @@ spectralpeaks.magnitudes >> hpcp.magnitudes
 spectralpeaks.frequencies >> hpcp.frequencies
 spectralpeaks.magnitudes >> hpcp_key.magnitudes
 spectralpeaks.frequencies >> hpcp_key.frequencies
-hpcp_key.hpcp >> key.pcp
-hpcp_key.hpcp >> (pool, 'tonal2.hpcp')
 hpcp.hpcp >> (pool, 'tonal.hpcp')
-key.key >> (pool, 'tonal.key_key')
-key.scale >> (pool, 'tonal.key_scale')
-key.strength >> (pool, 'tonal.key_strength')
+
 
 # Run streaming network
 essentia.run(loader)
