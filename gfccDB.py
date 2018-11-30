@@ -2,6 +2,7 @@ import numpy as np
 import sqlite3
 import essentia.streaming as ess
 import essentia
+import librosa
 
 db_conn = sqlite3.connect("data.db")
 db_cursor = db_conn.cursor()
@@ -18,7 +19,8 @@ for name in names:
         loader = ess.MonoLoader(filename="genres/"+name+"/"+song_name)
         framecutter = ess.FrameCutter(frameSize=4096, hopSize=2048, silentFrames='noise')
         windowing = ess.Windowing(type='blackmanharris62')
-        spectrum = ess.Spectrum()
+        spectrum = ess.Spectrum(size=2048)
+        pow_spectrum = ess.PowerSpectrum()
         spectralpeaks = ess.SpectralPeaks(orderBy='magnitude',
                                           magnitudeThreshold=0.00001,
                                           minFrequency=20,
@@ -28,62 +30,42 @@ for name in names:
 
 
         # Use default HPCP parameters
-        hpcp = ess.HPCP()
+        gfcc = ess.GFCC()
 
         # Use pool to store data
         pool = essentia.Pool()
+        pool2 = essentia.Pool()
 
         # Connect streaming algorithms
+
         loader.audio >> framecutter.signal
         framecutter.frame >> windowing.frame >> spectrum.frame
-        spectrum.spectrum >> spectralpeaks.spectrum
-        spectralpeaks.magnitudes >> hpcp.magnitudes
-        spectralpeaks.frequencies >> hpcp.frequencies
-        hpcp.hpcp >> (pool, 'tonal.hpcp')
+        spectrum.spectrum >> gfcc.spectrum
+        gfcc.gfcc >> (pool, 'gfcc.vector')
+        gfcc.bands >> (pool2, 'bands.vector')
 
+        """
+        loader.audio >> pow_spectrum.signal
+        pow_spectrum.powerSpectrum >> gfcc.spectrum
+        gfcc.gfcc >> (pool, 'gfcc.vector')
+        gfcc.bands >> (pool2, 'bands.vector')
+        """
         # Run streaming network
         essentia.run(loader)
 
 
-        arr = np.array(pool['tonal.hpcp'])
-        hpcp_profile = np.average(arr,axis=0)
+        arr = np.array(pool['gfcc.vector'])
+        gfcc_vector = np.average(arr,axis=0)
+
+        for i in range(1,14):
+            sql = ""
+            db_cursor.execute("UPDATE songs SET avg_hpcp_1=? WHERE song_name=?",(float(hpcp_profile[0]),song_name))
+            db_conn.commit()
 
 
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_1=? WHERE song_name=?''',(float(hpcp_profile[0]),song_name))
-        db_conn.commit()
 
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_2=? WHERE song_name=?''',(float(hpcp_profile[1]),song_name))
-        db_conn.commit()
 
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_3=? WHERE song_name=?''',(float(hpcp_profile[2]),song_name))
-        db_conn.commit()
 
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_4=? WHERE song_name=?''',(float(hpcp_profile[3]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_5=? WHERE song_name=?''',(float(hpcp_profile[4]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_6=? WHERE song_name=?''',(float(hpcp_profile[5]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_7=? WHERE song_name=?''',(float(hpcp_profile[6]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_8=? WHERE song_name=?''',(float(hpcp_profile[7]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_9=? WHERE song_name=?''',(float(hpcp_profile[8]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_10=? WHERE song_name=?''',(float(hpcp_profile[9]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_11=? WHERE song_name=?''',(float(hpcp_profile[10]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_12=? WHERE song_name=?''',(float(hpcp_profile[11]),song_name))
-        db_conn.commit()
 
     for i in range(10,100):
         song_name = name + '.' + '000' + str(i) + '.au'
@@ -91,7 +73,8 @@ for name in names:
         loader = ess.MonoLoader(filename="genres/"+name+"/"+song_name)
         framecutter = ess.FrameCutter(frameSize=4096, hopSize=2048, silentFrames='noise')
         windowing = ess.Windowing(type='blackmanharris62')
-        spectrum = ess.Spectrum()
+        spectrum = ess.Spectrum(size=2048)
+        pow_spectrum = ess.PowerSpectrum()
         spectralpeaks = ess.SpectralPeaks(orderBy='magnitude',
                                           magnitudeThreshold=0.00001,
                                           minFrequency=20,
@@ -101,62 +84,35 @@ for name in names:
 
 
         # Use default HPCP parameters
-        hpcp = ess.HPCP()
+        gfcc = ess.GFCC()
 
         # Use pool to store data
         pool = essentia.Pool()
+        pool2 = essentia.Pool()
 
         # Connect streaming algorithms
+
         loader.audio >> framecutter.signal
         framecutter.frame >> windowing.frame >> spectrum.frame
-        spectrum.spectrum >> spectralpeaks.spectrum
-        spectralpeaks.magnitudes >> hpcp.magnitudes
-        spectralpeaks.frequencies >> hpcp.frequencies
-        hpcp.hpcp >> (pool, 'tonal.hpcp')
+        spectrum.spectrum >> gfcc.spectrum
+        gfcc.gfcc >> (pool, 'gfcc.vector')
+        gfcc.bands >> (pool2, 'bands.vector')
 
+        """
+        loader.audio >> pow_spectrum.signal
+        pow_spectrum.powerSpectrum >> gfcc.spectrum
+        gfcc.gfcc >> (pool, 'gfcc.vector')
+        gfcc.bands >> (pool2, 'bands.vector')
+        """
         # Run streaming network
         essentia.run(loader)
 
 
-        arr = np.array(pool['tonal.hpcp'])
-        hpcp_profile = np.average(arr,axis=0)
+        arr = np.array(pool['gfcc.vector'])
+        gfcc_vector = np.average(arr,axis=0)
 
 
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_1=? WHERE song_name=?''',(float(hpcp_profile[0]),song_name))
-        db_conn.commit()
 
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_2=? WHERE song_name=?''',(float(hpcp_profile[1]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_3=? WHERE song_name=?''',(float(hpcp_profile[2]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_4=? WHERE song_name=?''',(float(hpcp_profile[3]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_5=? WHERE song_name=?''',(float(hpcp_profile[4]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_6=? WHERE song_name=?''',(float(hpcp_profile[5]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_7=? WHERE song_name=?''',(float(hpcp_profile[6]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_8=? WHERE song_name=?''',(float(hpcp_profile[7]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_9=? WHERE song_name=?''',(float(hpcp_profile[8]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_10=? WHERE song_name=?''',(float(hpcp_profile[9]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_11=? WHERE song_name=?''',(float(hpcp_profile[10]),song_name))
-        db_conn.commit()
-
-        db_cursor.execute('''UPDATE songs SET avg_hpcp_12=? WHERE song_name=?''',(float(hpcp_profile[11]),song_name))
-        db_conn.commit()
 
 
 
