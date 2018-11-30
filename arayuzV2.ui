@@ -51,19 +51,6 @@ background-color: rgb(222, 249, 255);
      <attribute name="title">
       <string>Classification Results</string>
      </attribute>
-     <widget class="QRadioButton" name="rb_lda">
-      <property name="geometry">
-       <rect>
-        <x>200</x>
-        <y>250</y>
-        <width>95</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>LDA</string>
-      </property>
-     </widget>
      <widget class="QRadioButton" name="rb_knn">
       <property name="geometry">
        <rect>
@@ -75,19 +62,6 @@ background-color: rgb(222, 249, 255);
       </property>
       <property name="text">
        <string>K-NN</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rb_log_reg">
-      <property name="geometry">
-       <rect>
-        <x>200</x>
-        <y>220</y>
-        <width>141</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Logistic Regression</string>
       </property>
      </widget>
      <widget class="QRadioButton" name="rb_naive_bayes">
@@ -133,19 +107,6 @@ font-weight: bold;
       </property>
       <property name="text">
        <string>Random Forest</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rb_neu_network">
-      <property name="geometry">
-       <rect>
-        <x>200</x>
-        <y>190</y>
-        <width>131</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Neural Network</string>
       </property>
      </widget>
      <widget class="QRadioButton" name="rb_svm">
@@ -447,6 +408,32 @@ font-weight: bold;
       </property>
       <property name="text">
        <string>HPCP</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cb_gfcc">
+      <property name="geometry">
+       <rect>
+        <x>710</x>
+        <y>340</y>
+        <width>111</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>GFCC</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rb_decision_tree">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>190</y>
+        <width>121</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Decision Tree</string>
       </property>
      </widget>
     </widget>

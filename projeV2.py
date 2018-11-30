@@ -30,6 +30,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.cluster import KMeans
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
 
 
 #qt designer baslangic
@@ -529,6 +530,71 @@ class Ui_MainWindow(object):
     def start_classification(self):
         database_features = self.get_user_selected_features()
 
+        #genre labels are encoded to integer values
+        tmp = []
+
+        for song in database_features.song_name:
+            if "blues" in song:
+                tmp.append(1)
+            if "classical" in song:
+                tmp.append(2)
+            if "country" in song:
+                tmp.append(3)
+            if "disco" in song:
+                tmp.append(4)
+            if "hiphop" in song:
+                tmp.append(5)
+            if "jazz" in song:
+                tmp.append(6)
+            if "metal" in song:
+                tmp.append(7)
+            if "pop" in song:
+                tmp.append(8)
+            if "reggae" in song:
+                tmp.append(9)
+            if "rock" in song:
+                tmp.append(10)
+
+
+
+        y_data = np.array(tmp, dtype=int)
+        x = database_features.drop(["song_name"],axis=1)
+
+
+        #min-max normalization
+        x_data = ( (x - np.min(x)) / (np.max(x) - np.min(x)) )
+
+        knn = SVC(kernel='linear', random_state=42)
+
+        for i in range(10):
+
+            x_train,x_test,y_train,y_test =train_test_split(x_data,y_data,test_size=0.1,random_state=42)
+
+            knn.fit(x_train,y_train)
+            y_pred = knn.predict(x_test)
+            acc = metrics.accuracy_score(y_test, y_pred)*100
+
+            print(acc)
+
+
+
+
+
+
+
+
+
+        nb = GaussianNB()
+        nb.fit(x_train,y_train)
+
+        #print(nb.score(x_test,y_test))
+
+
+
+
+
+
+
 
 
 
@@ -536,6 +602,8 @@ class Ui_MainWindow(object):
 
     def get_user_selected_features(self):
         db_con = sqlite3.connect("data.db")
+
+        cols = "song_name,"
 
         if self.cb_zcr.isChecked() == True:
             cols = cols + "avg_zero_crs_rate,var_zero_crs_rate,med_zero_crs_rate,"
@@ -548,7 +616,7 @@ class Ui_MainWindow(object):
         if self.cb_spec_rollof.isChecked() == True:
             cols = cols + "avg_spec_rolloff,var_spec_rolloff,med_spec_rolloff,"
         if self.cb_rmse.isChecked() == True:
-            cols = cols + "avg_rmse,var_rmse,med_rmse"
+            cols = cols + "avg_rmse,var_rmse,med_rmse,"
 
         if self.cb_mfcc.isChecked() == True:
             for i in range(1,21):
