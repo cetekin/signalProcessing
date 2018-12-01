@@ -57,15 +57,9 @@ class Ui_MainWindow(object):
         self.tab_screen.setObjectName("tab_screen")
         self.tab_screen_1 = QtWidgets.QWidget()
         self.tab_screen_1.setObjectName("tab_screen_1")
-        self.rb_lda = QtWidgets.QRadioButton(self.tab_screen_1)
-        self.rb_lda.setGeometry(QtCore.QRect(200, 250, 95, 20))
-        self.rb_lda.setObjectName("rb_lda")
         self.rb_knn = QtWidgets.QRadioButton(self.tab_screen_1)
         self.rb_knn.setGeometry(QtCore.QRect(200, 70, 95, 20))
         self.rb_knn.setObjectName("rb_knn")
-        self.rb_log_reg = QtWidgets.QRadioButton(self.tab_screen_1)
-        self.rb_log_reg.setGeometry(QtCore.QRect(200, 220, 141, 20))
-        self.rb_log_reg.setObjectName("rb_log_reg")
         self.rb_naive_bayes = QtWidgets.QRadioButton(self.tab_screen_1)
         self.rb_naive_bayes.setGeometry(QtCore.QRect(200, 100, 95, 20))
         self.rb_naive_bayes.setObjectName("rb_naive_bayes")
@@ -79,9 +73,6 @@ class Ui_MainWindow(object):
         self.rb_random_forest = QtWidgets.QRadioButton(self.tab_screen_1)
         self.rb_random_forest.setGeometry(QtCore.QRect(200, 160, 121, 20))
         self.rb_random_forest.setObjectName("rb_random_forest")
-        self.rb_neu_network = QtWidgets.QRadioButton(self.tab_screen_1)
-        self.rb_neu_network.setGeometry(QtCore.QRect(200, 190, 131, 20))
-        self.rb_neu_network.setObjectName("rb_neu_network")
         self.rb_svm = QtWidgets.QRadioButton(self.tab_screen_1)
         self.rb_svm.setGeometry(QtCore.QRect(200, 130, 95, 20))
         self.rb_svm.setObjectName("rb_svm")
@@ -175,6 +166,12 @@ class Ui_MainWindow(object):
         self.cb_hpcp = QtWidgets.QCheckBox(self.tab_screen_1)
         self.cb_hpcp.setGeometry(QtCore.QRect(710, 310, 111, 20))
         self.cb_hpcp.setObjectName("cb_hpcp")
+        self.cb_gfcc = QtWidgets.QCheckBox(self.tab_screen_1)
+        self.cb_gfcc.setGeometry(QtCore.QRect(710, 340, 111, 20))
+        self.cb_gfcc.setObjectName("cb_gfcc")
+        self.rb_decision_tree = QtWidgets.QRadioButton(self.tab_screen_1)
+        self.rb_decision_tree.setGeometry(QtCore.QRect(200, 190, 121, 20))
+        self.rb_decision_tree.setObjectName("rb_decision_tree")
         self.tab_screen.addTab(self.tab_screen_1, "")
         self.tab_screen_2 = QtWidgets.QWidget()
         self.tab_screen_2.setObjectName("tab_screen_2")
@@ -243,13 +240,10 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.rb_lda.setText(_translate("MainWindow", "LDA"))
         self.rb_knn.setText(_translate("MainWindow", "K-NN"))
-        self.rb_log_reg.setText(_translate("MainWindow", "Logistic Regression"))
         self.rb_naive_bayes.setText(_translate("MainWindow", "Naive Bayes"))
         self.label_5.setText(_translate("MainWindow", "CLASSIFIER"))
         self.rb_random_forest.setText(_translate("MainWindow", "Random Forest"))
-        self.rb_neu_network.setText(_translate("MainWindow", "Neural Network"))
         self.rb_svm.setText(_translate("MainWindow", "SVM"))
         self.label_4.setText(_translate("MainWindow", "FEATURES"))
         self.cb_zcr.setText(_translate("MainWindow", "Zero Crossing Rate"))
@@ -267,6 +261,8 @@ class Ui_MainWindow(object):
         self.label_8.setText(_translate("MainWindow", "<html><head/><body><p>MAX ACCURACY</p></body></html>"))
         self.start_classification_button.setText(_translate("MainWindow", "Start Classification"))
         self.cb_hpcp.setText(_translate("MainWindow", "HPCP"))
+        self.cb_gfcc.setText(_translate("MainWindow", "GFCC"))
+        self.rb_decision_tree.setText(_translate("MainWindow", "Decision Tree"))
         self.tab_screen.setTabText(self.tab_screen.indexOf(self.tab_screen_1), _translate("MainWindow", "Classification Results"))
         self.start_genre_classification.setText(_translate("MainWindow", "Import Music File"))
         self.genre_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">ESTIMATED GENRE</span></p></body></html>"))
@@ -564,7 +560,7 @@ class Ui_MainWindow(object):
         #min-max normalization
         x_data = ( (x - np.min(x)) / (np.max(x) - np.min(x)) )
 
-        knn = SVC(kernel='linear', random_state=42)
+        knn = SVC(kernel='linear', random_state=41)
 
         for i in range(10):
 
@@ -575,25 +571,6 @@ class Ui_MainWindow(object):
             acc = metrics.accuracy_score(y_test, y_pred)*100
 
             print(acc)
-
-
-
-
-
-
-
-
-
-        nb = GaussianNB()
-        nb.fit(x_train,y_train)
-
-        #print(nb.score(x_test,y_test))
-
-
-
-
-
-
 
 
 
@@ -629,6 +606,11 @@ class Ui_MainWindow(object):
         if self.cb_hpcp.isChecked() == True:
             for i in range(1,13):
                 cols = cols + "avg_hpcp_" + str(i) + ","
+
+
+        if self.cb_gfcc.isChecked() == True:
+            for i in range(1,14):
+                cols = cols + "avg_gfcc_" + str(i) + ","
 
         cols = cols[0:-1]
 
