@@ -17,20 +17,18 @@ import numpy as np
 import sqlite3
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
+import itertools
 import winsound
 import pandas as pd
 from sklearn import model_selection, preprocessing, metrics
 from sklearn.naive_bayes import GaussianNB
-from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.cluster import KMeans
-from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score
 
 
 #qt designer baslangic
@@ -58,54 +56,54 @@ class Ui_MainWindow(object):
         self.tab_screen_1 = QtWidgets.QWidget()
         self.tab_screen_1.setObjectName("tab_screen_1")
         self.rb_knn = QtWidgets.QRadioButton(self.tab_screen_1)
-        self.rb_knn.setGeometry(QtCore.QRect(200, 70, 95, 20))
+        self.rb_knn.setGeometry(QtCore.QRect(60, 70, 95, 20))
         self.rb_knn.setObjectName("rb_knn")
         self.rb_naive_bayes = QtWidgets.QRadioButton(self.tab_screen_1)
-        self.rb_naive_bayes.setGeometry(QtCore.QRect(200, 100, 95, 20))
+        self.rb_naive_bayes.setGeometry(QtCore.QRect(60, 100, 95, 20))
         self.rb_naive_bayes.setObjectName("rb_naive_bayes")
         self.label_5 = QtWidgets.QLabel(self.tab_screen_1)
-        self.label_5.setGeometry(QtCore.QRect(200, 30, 91, 31))
+        self.label_5.setGeometry(QtCore.QRect(60, 30, 91, 31))
         self.label_5.setStyleSheet("QLabel {\n"
 "color: black;\n"
 "font-weight: bold;\n"
 "}")
         self.label_5.setObjectName("label_5")
         self.rb_random_forest = QtWidgets.QRadioButton(self.tab_screen_1)
-        self.rb_random_forest.setGeometry(QtCore.QRect(200, 160, 121, 20))
+        self.rb_random_forest.setGeometry(QtCore.QRect(60, 160, 121, 20))
         self.rb_random_forest.setObjectName("rb_random_forest")
         self.rb_svm = QtWidgets.QRadioButton(self.tab_screen_1)
-        self.rb_svm.setGeometry(QtCore.QRect(200, 130, 95, 20))
+        self.rb_svm.setGeometry(QtCore.QRect(60, 130, 95, 20))
         self.rb_svm.setObjectName("rb_svm")
         self.label_4 = QtWidgets.QLabel(self.tab_screen_1)
-        self.label_4.setGeometry(QtCore.QRect(710, 30, 91, 31))
+        self.label_4.setGeometry(QtCore.QRect(250, 30, 91, 31))
         self.label_4.setStyleSheet("QLabel {\n"
 "color: black;\n"
 "font-weight: bold;\n"
 "}")
         self.label_4.setObjectName("label_4")
         self.cb_zcr = QtWidgets.QCheckBox(self.tab_screen_1)
-        self.cb_zcr.setGeometry(QtCore.QRect(710, 70, 141, 20))
+        self.cb_zcr.setGeometry(QtCore.QRect(250, 70, 141, 20))
         self.cb_zcr.setObjectName("cb_zcr")
         self.cb_spec_cen = QtWidgets.QCheckBox(self.tab_screen_1)
-        self.cb_spec_cen.setGeometry(QtCore.QRect(710, 100, 131, 20))
+        self.cb_spec_cen.setGeometry(QtCore.QRect(250, 100, 131, 20))
         self.cb_spec_cen.setObjectName("cb_spec_cen")
         self.cb_rmse = QtWidgets.QCheckBox(self.tab_screen_1)
-        self.cb_rmse.setGeometry(QtCore.QRect(710, 220, 81, 20))
+        self.cb_rmse.setGeometry(QtCore.QRect(250, 220, 81, 20))
         self.cb_rmse.setObjectName("cb_rmse")
         self.cb_spec_con = QtWidgets.QCheckBox(self.tab_screen_1)
-        self.cb_spec_con.setGeometry(QtCore.QRect(710, 160, 131, 20))
+        self.cb_spec_con.setGeometry(QtCore.QRect(250, 160, 131, 20))
         self.cb_spec_con.setObjectName("cb_spec_con")
         self.cb_spec_ban = QtWidgets.QCheckBox(self.tab_screen_1)
-        self.cb_spec_ban.setGeometry(QtCore.QRect(710, 130, 141, 20))
+        self.cb_spec_ban.setGeometry(QtCore.QRect(250, 130, 141, 20))
         self.cb_spec_ban.setObjectName("cb_spec_ban")
         self.cb_chroma_stft = QtWidgets.QCheckBox(self.tab_screen_1)
-        self.cb_chroma_stft.setGeometry(QtCore.QRect(710, 280, 111, 20))
+        self.cb_chroma_stft.setGeometry(QtCore.QRect(250, 280, 111, 20))
         self.cb_chroma_stft.setObjectName("cb_chroma_stft")
         self.cb_spec_rollof = QtWidgets.QCheckBox(self.tab_screen_1)
-        self.cb_spec_rollof.setGeometry(QtCore.QRect(710, 190, 111, 20))
+        self.cb_spec_rollof.setGeometry(QtCore.QRect(250, 190, 111, 20))
         self.cb_spec_rollof.setObjectName("cb_spec_rollof")
         self.cb_mfcc = QtWidgets.QCheckBox(self.tab_screen_1)
-        self.cb_mfcc.setGeometry(QtCore.QRect(710, 250, 81, 20))
+        self.cb_mfcc.setGeometry(QtCore.QRect(250, 250, 81, 20))
         self.cb_mfcc.setObjectName("cb_mfcc")
         self.gridLayoutWidget_2 = QtWidgets.QWidget(self.tab_screen_1)
         self.gridLayoutWidget_2.setGeometry(QtCore.QRect(-1, -1, 2, 2))
@@ -114,7 +112,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.avg_accuracy_label = QtWidgets.QLabel(self.tab_screen_1)
-        self.avg_accuracy_label.setGeometry(QtCore.QRect(110, 480, 271, 71))
+        self.avg_accuracy_label.setGeometry(QtCore.QRect(590, 650, 271, 71))
         self.avg_accuracy_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
@@ -122,20 +120,20 @@ class Ui_MainWindow(object):
 "}")
         self.avg_accuracy_label.setObjectName("avg_accuracy_label")
         self.con_matrix_label = QtWidgets.QLabel(self.tab_screen_1)
-        self.con_matrix_label.setGeometry(QtCore.QRect(600, 450, 347, 297))
+        self.con_matrix_label.setGeometry(QtCore.QRect(496, 90, 441, 351))
         self.con_matrix_label.setMinimumSize(QtCore.QSize(347, 297))
         self.con_matrix_label.setMaximumSize(QtCore.QSize(444, 397))
         self.con_matrix_label.setText("")
         self.con_matrix_label.setObjectName("con_matrix_label")
         self.label_6 = QtWidgets.QLabel(self.tab_screen_1)
-        self.label_6.setGeometry(QtCore.QRect(710, 400, 131, 31))
+        self.label_6.setGeometry(QtCore.QRect(660, 30, 131, 31))
         self.label_6.setStyleSheet("QLabel {\n"
 "color: black;\n"
 "font-weight: bold;\n"
 "}")
         self.label_6.setObjectName("label_6")
         self.label_7 = QtWidgets.QLabel(self.tab_screen_1)
-        self.label_7.setGeometry(QtCore.QRect(190, 440, 131, 31))
+        self.label_7.setGeometry(QtCore.QRect(680, 600, 131, 31))
         self.label_7.setStyleSheet("QLabel {\n"
 "color: black;\n"
 "font-weight: bold;\n"
@@ -157,20 +155,20 @@ class Ui_MainWindow(object):
 "}")
         self.label_8.setObjectName("label_8")
         self.start_classification_button = QtWidgets.QPushButton(self.tab_screen_1)
-        self.start_classification_button.setGeometry(QtCore.QRect(420, 270, 151, 51))
+        self.start_classification_button.setGeometry(QtCore.QRect(50, 360, 151, 51))
         self.start_classification_button.setStyleSheet("QPushButton{\n"
 "background-color: rgb(142, 157, 255);\n"
 "font-weight: bold;\n"
 "}")
         self.start_classification_button.setObjectName("start_classification_button")
         self.cb_hpcp = QtWidgets.QCheckBox(self.tab_screen_1)
-        self.cb_hpcp.setGeometry(QtCore.QRect(710, 310, 111, 20))
+        self.cb_hpcp.setGeometry(QtCore.QRect(250, 310, 111, 20))
         self.cb_hpcp.setObjectName("cb_hpcp")
         self.cb_gfcc = QtWidgets.QCheckBox(self.tab_screen_1)
-        self.cb_gfcc.setGeometry(QtCore.QRect(710, 340, 111, 20))
+        self.cb_gfcc.setGeometry(QtCore.QRect(250, 340, 111, 20))
         self.cb_gfcc.setObjectName("cb_gfcc")
         self.rb_decision_tree = QtWidgets.QRadioButton(self.tab_screen_1)
-        self.rb_decision_tree.setGeometry(QtCore.QRect(200, 190, 121, 20))
+        self.rb_decision_tree.setGeometry(QtCore.QRect(60, 190, 121, 20))
         self.rb_decision_tree.setObjectName("rb_decision_tree")
         self.tab_screen.addTab(self.tab_screen_1, "")
         self.tab_screen_2 = QtWidgets.QWidget()
@@ -531,47 +529,103 @@ class Ui_MainWindow(object):
 
         for song in database_features.song_name:
             if "blues" in song:
-                tmp.append(1)
+                tmp.append(0)
             if "classical" in song:
-                tmp.append(2)
+                tmp.append(1)
             if "country" in song:
-                tmp.append(3)
+                tmp.append(2)
             if "disco" in song:
-                tmp.append(4)
+                tmp.append(3)
             if "hiphop" in song:
-                tmp.append(5)
+                tmp.append(4)
             if "jazz" in song:
-                tmp.append(6)
+                tmp.append(5)
             if "metal" in song:
-                tmp.append(7)
+                tmp.append(6)
             if "pop" in song:
-                tmp.append(8)
+                tmp.append(7)
             if "reggae" in song:
-                tmp.append(9)
+                tmp.append(8)
             if "rock" in song:
-                tmp.append(10)
+                tmp.append(9)
 
 
 
         y_data = np.array(tmp, dtype=int)
+        #drop np.array dondurur mu?
         x = database_features.drop(["song_name"],axis=1)
 
 
-        #min-max normalization
-        x_data = ( (x - np.min(x)) / (np.max(x) - np.min(x)) )
+        #min-max normalization (0,1)
+        #x_data = ( (x - np.min(x)) / (np.max(x) - np.min(x)) )
 
-        knn = SVC(kernel='linear', random_state=41)
+        #min-max normalization (-1,1)
+        normalizer = preprocessing.MinMaxScaler((-1,1))
+        normalizer.fit(x)
+        x_data = normalizer.transform(x.values)
 
-        for i in range(10):
+        #default model selection
+        classifier = KNeighborsClassifier(n_neighbors=7, weights='distance')
 
-            x_train,x_test,y_train,y_test =train_test_split(x_data,y_data,test_size=0.1,random_state=42)
 
-            knn.fit(x_train,y_train)
-            y_pred = knn.predict(x_test)
-            acc = metrics.accuracy_score(y_test, y_pred)*100
 
-            print(acc)
 
+        if self.rb_knn.isChecked() == True:
+            classifier = KNeighborsClassifier(n_neighbors=7, weights='distance')
+
+        if self.rb_svm.isChecked() == True:
+            classifier = SVC(kernel='linear', random_state=42)
+
+        if self.rb_naive_bayes.isChecked() == True:
+            classifier = GaussianNB()
+
+        if self.rb_decision_tree.isChecked() == True:
+            classifier = DecisionTreeClassifier()
+
+        if self.rb_random_forest.isChecked() == True:
+            classifier = RandomForestClassifier(criterion='entropy', random_state=42)
+
+
+
+
+        #K fold cross validation
+        cross_validator = model_selection.KFold(n_splits=10, shuffle=True, random_state=42)
+        total_acc = 0
+        init_flag = 0 # Will be used for
+        resulting_cm = []  #resulting confusion matrix will be calculated cumulatively as k fold cross validation advances
+
+
+        for train_index,test_index in cross_validator.split(x_data):
+            x_train, x_test = x_data[train_index], x_data[test_index]
+            y_train, y_test = y_data[train_index], y_data[test_index]
+
+            classifier.fit(x_train,y_train)
+            acc = classifier.score(x_test,y_test)
+            y_pred = classifier.predict(x_test)
+            total_acc += acc
+
+            cm = confusion_matrix(y_test,y_pred)
+
+            if init_flag == 0:
+                resulting_cm = cm
+                init_flag = 1
+            else:
+                resulting_cm = resulting_cm + cm
+
+
+
+
+
+        avg_acc = total_acc / 10
+        avg_acc *= 100
+        self.avg_accuracy_label.setScaledContents(True)
+        self.avg_accuracy_label.setText(("%%%.2f" % avg_acc))
+        self.avg_accuracy_label.setStyleSheet("QLabel {font: 30pt;color: rgb(255, 255, 255);background-color:rgb(0, 0, 255);text-align: center}")
+
+
+        self.plot_confusion_matrix(resulting_cm, classes=["blues", "classical", "country", "disco", "hiphop", "jazz", "metal", "pop", "reggae", "rock"])
+        self.con_matrix_label.setScaledContents(True)
+        self.con_matrix_label.setPixmap(QtGui.QPixmap('fig.png'))
 
 
 
@@ -604,7 +658,7 @@ class Ui_MainWindow(object):
                 cols = cols + "avg_chroma_stft_" + str(i) + ","
 
         if self.cb_hpcp.isChecked() == True:
-            for i in range(1,13):
+            for i in range(1,37):
                 cols = cols + "avg_hpcp_" + str(i) + ","
 
 
@@ -621,6 +675,47 @@ class Ui_MainWindow(object):
         #print(database_features)
         db_con.close()
         return database_features
+
+
+
+    #The function at sklearn confusion matrix page is used
+    def plot_confusion_matrix(self,cm, classes,
+                              normalize=False,
+                              title=' Confusion Matrix',
+                              cmap=plt.cm.Blues):
+
+
+        """
+        This function prints and plots the confusion matrix.
+        Normalization can be applied by setting `normalize=True`.
+        """
+        if normalize:
+            cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+            print("Normalized confusion matrix")
+        else:
+            print('Confusion matrix, without normalization')
+
+        print(cm)
+
+        plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+        plt.title('Confusion Matrix')
+        plt.colorbar()
+        tick_marks = np.arange(len(classes))
+        plt.xticks(tick_marks, classes, rotation=45)
+        plt.yticks(tick_marks, classes)
+
+        thresh = cm.max() / 2.
+        for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+            plt.text(j, i, format(cm[i, j], 'd'),
+                     horizontalalignment="center",
+                     color="white" if cm[i, j] > thresh else "black")
+
+        plt.xlabel('Predicted Label')
+        plt.ylabel('True Label')
+        plt.tight_layout()
+        plt.savefig('fig.png', bbox_inches="tight", pad_inches=0.5)
+        plt.clf()
+
 
 
 
