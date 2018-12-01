@@ -22,10 +22,12 @@ for name in names:
 
 
 
+        song_name = name + '.' + '0000' + str(i) + '.au'
+        gfcc_vector = features["lowlevel.gfcc.mean"]
 
         for i in range(1,14):
             sql = "UPDATE songs SET avg_gfcc_" + str(i) + "=? WHERE song_name=?"
-            db_cursor.execute(sql,(float(features["lowlevel.gfcc.mean"][i-1]),song_name))
+            db_cursor.execute(sql,(float(gfcc_vector[i-1]),song_name))
             db_conn.commit()
 
 
@@ -44,9 +46,15 @@ for name in names:
 
 
 
+
+        song_name = name + '.' + '000' + str(i) + '.au'
+        gfcc_vector = features["lowlevel.gfcc.mean"]
+
+
+
         for i in range(1,14):
             sql = "UPDATE songs SET avg_gfcc_" + str(i) + "=? WHERE song_name=?"
-            db_cursor.execute(sql,(float(features["lowlevel.gfcc.mean"][i-1]),song_name))
+            db_cursor.execute(sql,(float(gfcc_vector[i-1]),song_name))
             db_conn.commit()
 
 
