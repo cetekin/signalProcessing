@@ -18,7 +18,7 @@ import sqlite3
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import itertools
-import winsound
+#import winsound
 import pandas as pd
 from sklearn import model_selection, preprocessing, metrics
 from sklearn.naive_bayes import GaussianNB
@@ -285,14 +285,6 @@ class Ui_MainWindow(object):
 
 
 
-
-    def play_music(self):
-        directory = self.music_directory[self.music_list.currentItem().text()]
-        winsound.PlaySound(directory,winsound.SND_ASYNC)
-
-
-    def pause_music(self):
-        winsound.PlaySound(None, winsound.SND_PURGE)
 
 
     def select_all_features(self):
