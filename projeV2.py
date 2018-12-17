@@ -29,6 +29,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import precision_score
 
 
 #qt designer baslangic
@@ -579,6 +581,8 @@ class Ui_MainWindow(object):
             init_flag = 0
             max_acc = 0
             resulting_cm = []  #resulting confusion matrix will be calculated cumulatively as k fold cross validation advances
+            precision = 0
+            recall = 0
 
 
             for train_index,test_index in cross_validator.split(x_data):
@@ -594,6 +598,8 @@ class Ui_MainWindow(object):
                     max_acc = acc
 
                 cm = confusion_matrix(y_test,y_pred)
+                precision += precision_score(y_test, y_pred, average='macro')
+                recall += recall_score(y_test, y_pred, average='macro')
 
                 if init_flag == 0:
                     resulting_cm = cm
@@ -605,6 +611,11 @@ class Ui_MainWindow(object):
 
 
 
+            print("precision:",100*(precision/int(self.le_kfold.text()))) #degisecek
+            print("recall:",100*(recall/int(self.le_kfold.text()))) #degisecek
+
+            recall = np.diag(cm) / np.sum(cm, axis = 1)
+            precision = np.diag(cm) / np.sum(cm, axis = 0)
             avg_acc = total_acc / int(self.le_kfold.text())
             avg_acc *= 100
             self.avg_accuracy_label.setScaledContents(True)
