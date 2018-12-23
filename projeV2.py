@@ -259,7 +259,7 @@ class Ui_MainWindow(object):
 
         self.start_classification_button.clicked.connect(self.start_classification)
         self.pb_select_all_features.clicked.connect(self.select_all_features)
-        #self.start_genre_classification.clicked.connect(self.estimate_music_genre)
+        self.start_genre_classification.clicked.connect(self.estimate_music_genre)
         #self.genre_play_button.clicked.connect(self.genre_play_music)
         #self.genre_pause_button.clicked.connect(self.pause_music)
 
@@ -549,6 +549,7 @@ class Ui_MainWindow(object):
             #min-max normalization (-1,1)
             normalizer = preprocessing.MinMaxScaler((-1,1))
             normalizer.fit(x)
+            self.normalizer = normalizer
             x_data = normalizer.transform(x.values)
 
             #default model selection
@@ -574,6 +575,7 @@ class Ui_MainWindow(object):
 
 
 
+            self.classifier = classifier
 
             #K fold cross validation
             cross_validator = model_selection.KFold(n_splits=int(self.le_kfold.text()), shuffle=True, random_state=42)
@@ -688,11 +690,25 @@ class Ui_MainWindow(object):
             self.feature_flag = 1
             for i in range(1,21):
                 cols = cols + "avg_mfcc_" + str(i) + ","
+            for i in range(1,21):
+                cols = cols + "var_mfcc_" + str(i) + ","
 
         if self.cb_chroma_stft.isChecked() == True:
             self.feature_flag = 1
             for i in range(1,13):
                 cols = cols + "avg_chroma_stft_" + str(i) + ","
+            for i in range(1,13):
+                cols = cols + "var_chroma_stft_" + str(i) + ","
+
+
+        if self.cb_gfcc.isChecked() == True:
+            self.feature_flag = 1
+            for i in range(1,14):
+                cols = cols + "avg_gfcc_" + str(i) + ","
+            for i in range(1,14):
+                cols = cols + "var_gfcc_" + str(i) + ","
+
+
 
         if self.cb_hpcp.isChecked() == True:
             self.feature_flag = 1
@@ -700,10 +716,6 @@ class Ui_MainWindow(object):
                 cols = cols + "avg_hpcp_" + str(i) + ","
 
 
-        if self.cb_gfcc.isChecked() == True:
-            self.feature_flag = 1
-            for i in range(1,14):
-                cols = cols + "avg_gfcc_" + str(i) + ","
 
         cols = cols[0:-1]
 
@@ -757,38 +769,145 @@ class Ui_MainWindow(object):
         plt.clf()
 
 
+    def estimate_music_genre(self):
+
+        options = QFileDialog.Options()
+        fname,ok = QFileDialog.getOpenFileName(self.mainwindow, 'Import music file','', 'Music files (*.mp3 *.wav *.au)',options=options)
+        self.test_music_path = fname
+        if ok:
+            #Music name display
+            url = QUrl.fromLocalFile(fname)
+            music_name = url.fileName()
+            self.genre_music_name_label.setText(music_name)
+
+            features = self.feature_extract(song_name)
+
+
+
+            used_features = []
+            if self.cb_zcr.isChecked() == True:
+                used_features = np.append(used_features, features[0:3])
+
+            if self.cb_spec_cen.isChecked() == True:
+                used_features = np.append(used_features, features[3:6])
+
+            if self.cb_spec_ban.isChecked() == True:
+                used_features = np.append(used_features, features[6:9])
+
+            if self.cb_spec_con.isChecked() == True:
+                used_features = np.append(used_features, features[9:12])
+
+            if self.cb_spec_rollof.isChecked() == True:
+                used_features = np.append(used_features, features[12:15])
+
+            if self.cb_rmse.isChecked() == True:
+                used_features = np.append(used_features, features[15:18])
+
+            if self.cb_mfcc.isChecked() == True:
+                used_features = np.append(used_features, features[18:38])
+                used_features = np.append(used_features, features[99:119])
+
+            if self.cb_chroma_stft.isChecked() == True:
+                used_features = np.append(used_features, features[38:50])
+                used_features = np.append(used_features, features[119:131])
+
+
+            if self.cb_gfcc.isChecked() == True:
+                used_features = np.append(used_features, features[50:63])
+                used_features = np.append(used_features, features[131:144])
+
+
+            if self.cb_hpcp.isChecked() == True:
+                used_features = np.append(used_features, features[63:99])
 
 
 
 
 
-######################################################################################################################################
-
-def feature_extract(y,sr):
-    features = [np.average(librosa.feature.zero_crossing_rate(y)),np.var(librosa.feature.zero_crossing_rate(y)),
-           np.average(librosa.feature.spectral_centroid(y,sr)),np.var(librosa.feature.spectral_centroid(y,sr)),
-                     np.average(librosa.feature.spectral_bandwidth(y,sr)),np.var(librosa.feature.spectral_bandwidth(y,sr)),
-                               np.average(librosa.feature.spectral_contrast(y,sr)),np.var(librosa.feature.spectral_contrast(y,sr)),
-                                         np.average(librosa.feature.spectral_rolloff(y,sr)),np.var(librosa.feature.spectral_rolloff(y,sr)),
-                                                   np.average(librosa.feature.rmse(y)),np.var(librosa.feature.rmse(y))]
-
-    #calculate and add mfcc
-    tmp=librosa.feature.mfcc(y,sr)
-    tmpp=[None]*20
-    for i in range(20):
-        tmpp[i]=np.average(tmp[i])
-    features=np.append(features,tmpp)
-    #calculate and add chroma_stft
-    tmp=librosa.feature.chroma_stft(y,sr)
-    tmpp=[None]*12
-    for i in range(12):
-        tmpp[i]=np.average(tmp[i])
-    features=np.append(features,tmpp)
-
-    return features
+            #Waveplot drawing
+            y, sr = librosa.load(fname)
+            plt.figure()
+            librosa.display.waveplot(y, sr=sr)
+            plt.title('Waveplot of the Song')
+            plt.savefig('fig2.png', bbox_inches="tight", pad_inches=0.3)
+            self.waveplot_label.setPixmap(QtGui.QPixmap('fig2.png').scaled(371, 181, QtCore.Qt.KeepAspectRatioByExpanding, QtCore.Qt.SmoothTransformation))
+            plt.clf()
 
 
 
+
+    def feature_extract(self,song_name):
+
+        y,sr = librosa.load(song_name)
+
+        total_features = np.array([np.average(librosa.feature.zero_crossing_rate(y)),np.var(librosa.feature.zero_crossing_rate(y)),np.median(librosa.feature.zero_crossing_rate(y)),
+               np.average(librosa.feature.spectral_centroid(y,sr)),np.var(librosa.feature.spectral_centroid(y,sr)),np.median(librosa.feature.spectral_centroid(y,sr)),
+                         np.average(librosa.feature.spectral_bandwidth(y,sr)),np.var(librosa.feature.spectral_bandwidth(y,sr)),np.median(librosa.feature.spectral_bandwidth(y,sr)),
+                                   np.average(librosa.feature.spectral_contrast(y,sr)),np.var(librosa.feature.spectral_contrast(y,sr)),np.median(librosa.feature.spectral_contrast(y,sr)),
+                                             np.average(librosa.feature.spectral_rolloff(y,sr)),np.var(librosa.feature.spectral_rolloff(y,sr)),np.median(librosa.feature.spectral_rolloff(y,sr)),
+                                                       np.average(librosa.feature.rmse(y)),np.var(librosa.feature.rmse(y)),np.median(librosa.feature.rmse(y))])
+
+
+
+
+
+        #calculate and add avg mfcc
+        tmp_mfcc=librosa.feature.mfcc(y,sr)
+
+        tmpp=[None]*20
+        for i in range(20):
+            tmpp[i]=np.average(tmp_mfcc[i])
+        total_features=np.append(total_features,np.array(tmpp))
+
+        #calculate and add avg chroma_stft
+        tmp_chroma_stft=librosa.feature.chroma_stft(y,sr)
+
+        tmpp=[None]*12
+        for i in range(12):
+            tmpp[i]=np.average(tmp_chroma_stft[i])
+        total_features=np.append(total_features,np.array(tmpp))
+
+
+        #essentia features
+        features, features_frames = es.MusicExtractor(lowlevelStats=['mean', 'stdev'],
+                                                      rhythmStats=['mean', 'stdev'],
+                                                      tonalStats=['mean', 'stdev'])(song_name)
+
+
+
+
+        #calculate and add avg gfcc
+        avg_gfcc_vector = features["lowlevel.gfcc.mean"]
+        total_features = np.append(total_features,avg_gfcc_vector)
+
+
+        #calculate and add avg HPCP
+        avg_hpcp_vector = features["tonal.hpcp.mean"]
+        total_features = np.append(total_features,avg_hpcp_vector)
+
+
+
+        #calculate and add std dev. mfcc
+        tmpp=[None]*20
+        for i in range(20):
+            tmpp[i]=np.var(tmp_mfcc[i])
+        total_features=np.append(total_features,np.array(tmpp))
+
+
+        #calculate and add std dev. chroma stft
+        tmpp=[None]*20
+        for i in range(20):
+            tmpp[i]=np.var(tmp_chroma_stft[i])
+        total_features=np.append(total_features,tmpp)
+
+
+        #calculate and add std dev gfcc
+        var_gfcc_vector = features["lowlevel.gfcc.stdev"]
+        total_features = np.append(total_features,var_gfcc_vector)
+
+
+
+        return features
 
 
 
