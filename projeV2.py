@@ -263,7 +263,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Music Genre Classification"))
         self.rb_knn.setText(_translate("MainWindow", "K-NN"))
         self.rb_naive_bayes.setText(_translate("MainWindow", "Naive Bayes"))
         self.label_5.setText(_translate("MainWindow", "CLASSIFIER"))
@@ -352,7 +352,8 @@ class Ui_MainWindow(object):
         self.cb_spec_ban.setChecked(True)
         self.cb_spec_con.setChecked(True)
         self.cb_spec_rollof.setChecked(True)
-        self.cb_chroma_stft .setChecked(True)
+        self.cb_chroma_stft.setChecked(True)
+        self.cb_mfcc_derivative.setChecked(True)
 
 
     """
@@ -671,7 +672,7 @@ class Ui_MainWindow(object):
         else:
 
             self.error_msg.setIcon(QMessageBox.Critical)
-            self.error_msg.setWindowTitle("Hata")
+            self.error_msg.setWindowTitle("Error")
 
             if self.feature_flag == 0:
                 self.error_msg.setText("Please select at least one feature from features!")

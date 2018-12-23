@@ -45,7 +45,7 @@ background-color: rgb(222, 249, 255);
      <string notr="true">background-color: rgb(222, 249, 255);</string>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_screen_1">
      <attribute name="title">
