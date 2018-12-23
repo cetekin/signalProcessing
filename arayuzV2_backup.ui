@@ -45,7 +45,7 @@ background-color: rgb(222, 249, 255);
      <string notr="true">background-color: rgb(222, 249, 255);</string>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_screen_1">
      <attribute name="title">
@@ -210,7 +210,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>250</x>
-        <y>280</y>
+        <y>310</y>
         <width>151</width>
         <height>20</height>
        </rect>
@@ -382,7 +382,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>700</y>
+        <y>720</y>
         <width>151</width>
         <height>51</height>
        </rect>
@@ -401,7 +401,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>250</x>
-        <y>310</y>
+        <y>340</y>
         <width>151</width>
         <height>20</height>
        </rect>
@@ -414,7 +414,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>250</x>
-        <y>340</y>
+        <y>370</y>
         <width>141</width>
         <height>20</height>
        </rect>
@@ -440,7 +440,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>510</y>
+        <y>530</y>
         <width>113</width>
         <height>22</height>
        </rect>
@@ -456,7 +456,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>470</y>
+        <y>490</y>
         <width>301</width>
         <height>16</height>
        </rect>
@@ -469,7 +469,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>580</y>
+        <y>600</y>
         <width>391</width>
         <height>16</height>
        </rect>
@@ -482,7 +482,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>620</y>
+        <y>640</y>
         <width>113</width>
         <height>22</height>
        </rect>
@@ -498,7 +498,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>240</x>
-        <y>380</y>
+        <y>410</y>
         <width>131</width>
         <height>31</height>
        </rect>
@@ -512,6 +512,19 @@ color: rgb(255, 255, 255)
       </property>
       <property name="text">
        <string>Select all features</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cb_mfcc_derivative">
+      <property name="geometry">
+       <rect>
+        <x>250</x>
+        <y>280</y>
+        <width>171</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>MFCC Derivative</string>
       </property>
      </widget>
     </widget>
