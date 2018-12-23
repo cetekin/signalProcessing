@@ -705,8 +705,6 @@ class Ui_MainWindow(object):
             self.feature_flag = 1
             for i in range(1,14):
                 cols = cols + "avg_gfcc_" + str(i) + ","
-            for i in range(1,14):
-                cols = cols + "var_gfcc_" + str(i) + ","
 
 
 
@@ -714,6 +712,17 @@ class Ui_MainWindow(object):
             self.feature_flag = 1
             for i in range(1,37):
                 cols = cols + "avg_hpcp_" + str(i) + ","
+
+
+
+
+        if self.cb_mfcc_derivative.isChecked() == True:
+            self.feature_flag = 1
+            for i in range(1,21):
+                cols = cols + "avg_mfcc_derivative_" + str(i) + ","
+                cols = cols + "var_mfcc_derivative_" + str(i) + ","
+
+
 
 
 
@@ -814,15 +823,34 @@ class Ui_MainWindow(object):
 
             if self.cb_gfcc.isChecked() == True:
                 used_features = np.append(used_features, features[50:63])
-                used_features = np.append(used_features, features[131:144])
 
 
             if self.cb_hpcp.isChecked() == True:
                 used_features = np.append(used_features, features[63:99])
 
 
+            if self.cb_mfcc_derivative.isChecked() == True:
+                used_features = np.append(used_features, features[131:171])
+
+            #Reference --> Bilal's code
+
+            used_features = used_features.reshape(1,-1)
+
+            X_test  = self.normalizer.transform(used_features)
+
+            Y_pred = self.classifier.predict(X_test)
 
 
+            if Y_pred == 0: self.genre_label.setText("Blues")
+            if Y_pred == 1: self.genre_label.setText("Classical")
+            if Y_pred == 2: self.genre_label.setText("Country")
+            if Y_pred == 3: self.genre_label.setText("Disco")
+            if Y_pred == 4: self.genre_label.setText("Hiphop")
+            if Y_pred == 5: self.genre_label.setText("Jazz")
+            if Y_pred == 6: self.genre_label.setText("Metal")
+            if Y_pred == 7: self.genre_label.setText("Pop")
+            if Y_pred == 8: self.genre_label.setText("Reggae")
+            if Y_pred == 9: self.genre_label.setText("Rock")
 
             #Waveplot drawing
             y, sr = librosa.load(fname)
@@ -895,15 +923,36 @@ class Ui_MainWindow(object):
 
 
         #calculate and add std dev. chroma stft
-        tmpp=[None]*20
-        for i in range(20):
+        tmpp=[None]*12
+        for i in range(12):
             tmpp[i]=np.var(tmp_chroma_stft[i])
         total_features=np.append(total_features,tmpp)
 
 
-        #calculate and add std dev gfcc
-        var_gfcc_vector = features["lowlevel.gfcc.stdev"]
-        total_features = np.append(total_features,var_gfcc_vector)
+
+        #MFCC derivative
+        #Reference --> Bilal's code
+
+        mfcc_col_size = len(tmp_mfcc[0])
+        mfcc_derivative = np.empty([20, mfcc_col_size], dtype=float)
+        #First columns initialized to 0
+        for i in range(20):
+            mfcc_derivative[i][0] = 0
+        #Calculating derivative and filling matrix
+        for i in range(20):
+            for j in range(1, mfcc_col_size):
+                mfcc_derivative[i][j] = tmp_mfcc[i][j] - tmp_mfcc[i][j-1]
+
+
+        #add mfcc derivative avg and std
+        mfcc_derivative_avgs_stds = np.empty(2*20, dtype=float)
+        j=0
+        for i in range(20):
+            mfcc_derivative_avgs_stds[j] = np.average(mfcc_derivative[i])
+            mfcc_derivative_avgs_stds[j+1] = np.var(mfcc_derivative[i])
+            j = j+2
+        total_features = np.append(total_features, np.array(mfcc_derivative_avgs_stds))
+
 
 
 
