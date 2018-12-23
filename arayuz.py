@@ -89,6 +89,7 @@ class Ui_MainWindow(object):
 "background-color:rgb(0, 0, 255);\n"
 "font-weight: bold;\n"
 "}")
+        self.avg_accuracy_label.setAlignment(QtCore.Qt.AlignCenter)
         self.avg_accuracy_label.setObjectName("avg_accuracy_label")
         self.con_matrix_label = QtWidgets.QLabel(self.tab_screen_1)
         self.con_matrix_label.setGeometry(QtCore.QRect(510, 90, 441, 351))
@@ -117,6 +118,7 @@ class Ui_MainWindow(object):
 "background-color:rgb(0, 0, 255);\n"
 "font-weight: bold;\n"
 "}")
+        self.max_accuracy_label.setAlignment(QtCore.Qt.AlignCenter)
         self.max_accuracy_label.setObjectName("max_accuracy_label")
         self.label_8 = QtWidgets.QLabel(self.tab_screen_1)
         self.label_8.setGeometry(QtCore.QRect(670, 510, 151, 31))
@@ -176,30 +178,35 @@ class Ui_MainWindow(object):
         self.waveplot_label.setText("")
         self.waveplot_label.setObjectName("waveplot_label")
         self.start_genre_classification = QtWidgets.QPushButton(self.tab_screen_2)
-        self.start_genre_classification.setGeometry(QtCore.QRect(450, 450, 151, 31))
+        self.start_genre_classification.setGeometry(QtCore.QRect(450, 470, 151, 31))
         self.start_genre_classification.setStyleSheet("QPushButton{\n"
 "background-color: rgb(142, 157, 255);\n"
 "font-weight: bold;\n"
 "}")
         self.start_genre_classification.setObjectName("start_genre_classification")
         self.genre_label = QtWidgets.QLabel(self.tab_screen_2)
-        self.genre_label.setGeometry(QtCore.QRect(380, 590, 271, 71))
+        self.genre_label.setGeometry(QtCore.QRect(380, 610, 271, 71))
         self.genre_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
 "font-weight: bold;\n"
 "}")
+        self.genre_label.setAlignment(QtCore.Qt.AlignCenter)
         self.genre_label.setObjectName("genre_label")
         self.genre_music_name_label = QtWidgets.QLabel(self.tab_screen_2)
-        self.genre_music_name_label.setGeometry(QtCore.QRect(340, 410, 371, 20))
+        self.genre_music_name_label.setGeometry(QtCore.QRect(340, 410, 371, 31))
         self.genre_music_name_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
 "}")
+        self.genre_music_name_label.setAlignment(QtCore.Qt.AlignCenter)
         self.genre_music_name_label.setObjectName("genre_music_name_label")
         self.label_3 = QtWidgets.QLabel(self.tab_screen_2)
-        self.label_3.setGeometry(QtCore.QRect(460, 50, 151, 31))
+        self.label_3.setGeometry(QtCore.QRect(460, 30, 191, 51))
         self.label_3.setObjectName("label_3")
+        self.label_9 = QtWidgets.QLabel(self.tab_screen_2)
+        self.label_9.setGeometry(QtCore.QRect(440, 560, 191, 31))
+        self.label_9.setObjectName("label_9")
         self.tab_screen.addTab(self.tab_screen_2, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.import_file = QtWidgets.QAction(MainWindow)
@@ -217,7 +224,7 @@ class Ui_MainWindow(object):
         self.create_new_db_action.setObjectName("create_new_db_action")
 
         self.retranslateUi(MainWindow)
-        self.tab_screen.setCurrentIndex(0)
+        self.tab_screen.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -257,6 +264,7 @@ class Ui_MainWindow(object):
         self.genre_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">ESTIMATED GENRE</span></p></body></html>"))
         self.genre_music_name_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">NAME OF THE MUSIC</p></body></html>"))
         self.label_3.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:18pt; font-weight:600;\">Waveplot</span></p></body></html>"))
+        self.label_9.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">Estimated Genre</span></p></body></html>"))
         self.tab_screen.setTabText(self.tab_screen.indexOf(self.tab_screen_2), _translate("MainWindow", "Genre Estimation"))
         self.import_file.setText(_translate("MainWindow", "Import Music"))
         self.actionZero_Crossing_Rate.setText(_translate("MainWindow", "Zero Crossing Rate"))
