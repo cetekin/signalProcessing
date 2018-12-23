@@ -422,25 +422,6 @@ class Ui_MainWindow(object):
         winsound.PlaySound(self.test_music_path,winsound.SND_ASYNC)
 
 
-    def estimate_music_genre(self):
-        options = QFileDialog.Options()
-        fname,ok = QFileDialog.getOpenFileName(self.mainwindow, 'Import music file','', 'Music files (*.mp3 *.wav *.au)',options=options)
-        self.test_music_path = fname
-        if ok:
-            #Music name display
-            url = QUrl.fromLocalFile(fname)
-            music_name = url.fileName()
-            self.genre_music_name_label.setText(music_name)
-            #Waveplot drawing
-            y, sr = librosa.load(fname)
-            plt.figure()
-            librosa.display.waveplot(y, sr=sr)
-            plt.title('Waveplot of the Song')
-            plt.savefig('fig2.png', bbox_inches="tight", pad_inches=0.3)
-            self.waveplot_label.setPixmap(QtGui.QPixmap('fig2.png').scaled(371, 181, QtCore.Qt.KeepAspectRatioByExpanding, QtCore.Qt.SmoothTransformation))
-            plt.clf()
-
-
     #Write given feature list of a specific song to the database
     def write_features_to_database(self,feature_list,s_name,db_conn):
         db_cursor = db_conn.cursor()
@@ -833,49 +814,50 @@ class Ui_MainWindow(object):
             url = QUrl.fromLocalFile(fname)
             music_name = url.fileName()
             self.genre_music_name_label.setText(music_name)
+            self.genre_music_name_label.setStyleSheet("QLabel {font: 20pt;color: rgb(255, 255, 255);background-color:rgb(0, 0, 255);text-align: center}")
 
-            features = self.feature_extract(fname)
+            features_add = self.feature_extract(fname)
 
 
 
             used_features = []
             if self.cb_zcr.isChecked() == True:
-                used_features = np.append(used_features, features[0:3])
+                used_features = np.append(used_features, features_add[0:3])
 
             if self.cb_spec_cen.isChecked() == True:
-                used_features = np.append(used_features, features[3:6])
+                used_features = np.append(used_features, features_add[3:6])
 
             if self.cb_spec_ban.isChecked() == True:
-                used_features = np.append(used_features, features[6:9])
+                used_features = np.append(used_features, features_add[6:9])
 
             if self.cb_spec_con.isChecked() == True:
-                used_features = np.append(used_features, features[9:12])
+                used_features = np.append(used_features, features_add[9:12])
 
             if self.cb_spec_rollof.isChecked() == True:
-                used_features = np.append(used_features, features[12:15])
+                used_features = np.append(used_features, features_add[12:15])
 
             if self.cb_rmse.isChecked() == True:
-                used_features = np.append(used_features, features[15:18])
+                used_features = np.append(used_features, features_add[15:18])
 
             if self.cb_mfcc.isChecked() == True:
-                used_features = np.append(used_features, features[18:38])
-                used_features = np.append(used_features, features[99:119])
+                used_features = np.append(used_features, features_add[18:38])
+                used_features = np.append(used_features, features_add[99:119])
 
             if self.cb_chroma_stft.isChecked() == True:
-                used_features = np.append(used_features, features[38:50])
-                used_features = np.append(used_features, features[119:131])
+                used_features = np.append(used_features, features_add[38:50])
+                used_features = np.append(used_features, features_add[119:131])
 
 
             if self.cb_gfcc.isChecked() == True:
-                used_features = np.append(used_features, features[50:63])
+                used_features = np.append(used_features, features_add[50:63])
 
 
             if self.cb_hpcp.isChecked() == True:
-                used_features = np.append(used_features, features[63:99])
+                used_features = np.append(used_features, features_add[63:99])
 
 
             if self.cb_mfcc_derivative.isChecked() == True:
-                used_features = np.append(used_features, features[131:171])
+                used_features = np.append(used_features, features_add[131:171])
 
             #Reference --> Bilal's code
 
@@ -896,6 +878,8 @@ class Ui_MainWindow(object):
             if Y_pred == 7: self.genre_label.setText("Pop")
             if Y_pred == 8: self.genre_label.setText("Reggae")
             if Y_pred == 9: self.genre_label.setText("Rock")
+
+            self.genre_label.setStyleSheet("QLabel {font: 30pt;color: rgb(255, 255, 255);background-color:rgb(0, 0, 255);text-align: center}")
 
             #Waveplot drawing
             y, sr = librosa.load(fname)
@@ -1001,7 +985,7 @@ class Ui_MainWindow(object):
 
 
 
-        return features
+        return total_features
 
 
 
