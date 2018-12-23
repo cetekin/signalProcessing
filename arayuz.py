@@ -224,7 +224,7 @@ class Ui_MainWindow(object):
         self.create_new_db_action.setObjectName("create_new_db_action")
 
         self.retranslateUi(MainWindow)
-        self.tab_screen.setCurrentIndex(1)
+        self.tab_screen.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
