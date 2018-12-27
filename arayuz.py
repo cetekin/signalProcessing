@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\arayuzV2_backup.ui'
+# Form implementation generated from reading ui file 'arayuzV2_backup.ui'
 #
 # Created by: PyQt5 UI code generator 5.11.3
 #
@@ -83,7 +83,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.avg_accuracy_label = QtWidgets.QLabel(self.tab_screen_1)
-        self.avg_accuracy_label.setGeometry(QtCore.QRect(590, 700, 271, 71))
+        self.avg_accuracy_label.setGeometry(QtCore.QRect(470, 700, 271, 71))
         self.avg_accuracy_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
@@ -105,14 +105,14 @@ class Ui_MainWindow(object):
 "}")
         self.label_6.setObjectName("label_6")
         self.label_7 = QtWidgets.QLabel(self.tab_screen_1)
-        self.label_7.setGeometry(QtCore.QRect(680, 660, 151, 31))
+        self.label_7.setGeometry(QtCore.QRect(550, 660, 151, 31))
         self.label_7.setStyleSheet("QLabel {\n"
 "color: black;\n"
 "font-weight: bold;\n"
 "}")
         self.label_7.setObjectName("label_7")
         self.max_accuracy_label = QtWidgets.QLabel(self.tab_screen_1)
-        self.max_accuracy_label.setGeometry(QtCore.QRect(590, 560, 271, 71))
+        self.max_accuracy_label.setGeometry(QtCore.QRect(470, 560, 271, 71))
         self.max_accuracy_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
@@ -121,7 +121,7 @@ class Ui_MainWindow(object):
         self.max_accuracy_label.setAlignment(QtCore.Qt.AlignCenter)
         self.max_accuracy_label.setObjectName("max_accuracy_label")
         self.label_8 = QtWidgets.QLabel(self.tab_screen_1)
-        self.label_8.setGeometry(QtCore.QRect(670, 510, 151, 31))
+        self.label_8.setGeometry(QtCore.QRect(550, 520, 151, 31))
         self.label_8.setStyleSheet("QLabel {\n"
 "color: black;\n"
 "font-weight: bold;\n"
@@ -168,6 +168,38 @@ class Ui_MainWindow(object):
         self.cb_mfcc_derivative = QtWidgets.QCheckBox(self.tab_screen_1)
         self.cb_mfcc_derivative.setGeometry(QtCore.QRect(250, 280, 171, 20))
         self.cb_mfcc_derivative.setObjectName("cb_mfcc_derivative")
+        self.precision_label = QtWidgets.QLabel(self.tab_screen_1)
+        self.precision_label.setGeometry(QtCore.QRect(750, 560, 271, 71))
+        self.precision_label.setStyleSheet("QLabel{\n"
+"color: rgb(255, 255, 255);\n"
+"background-color:rgb(0, 0, 255);\n"
+"font-weight: bold;\n"
+"}")
+        self.precision_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.precision_label.setObjectName("precision_label")
+        self.recall_label = QtWidgets.QLabel(self.tab_screen_1)
+        self.recall_label.setGeometry(QtCore.QRect(750, 700, 271, 71))
+        self.recall_label.setStyleSheet("QLabel{\n"
+"color: rgb(255, 255, 255);\n"
+"background-color:rgb(0, 0, 255);\n"
+"font-weight: bold;\n"
+"}")
+        self.recall_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.recall_label.setObjectName("recall_label")
+        self.label_10 = QtWidgets.QLabel(self.tab_screen_1)
+        self.label_10.setGeometry(QtCore.QRect(840, 520, 151, 31))
+        self.label_10.setStyleSheet("QLabel {\n"
+"color: black;\n"
+"font-weight: bold;\n"
+"}")
+        self.label_10.setObjectName("label_10")
+        self.label_11 = QtWidgets.QLabel(self.tab_screen_1)
+        self.label_11.setGeometry(QtCore.QRect(850, 660, 151, 31))
+        self.label_11.setStyleSheet("QLabel {\n"
+"color: black;\n"
+"font-weight: bold;\n"
+"}")
+        self.label_11.setObjectName("label_11")
         self.tab_screen.addTab(self.tab_screen_1, "")
         self.tab_screen_2 = QtWidgets.QWidget()
         self.tab_screen_2.setObjectName("tab_screen_2")
@@ -205,7 +237,7 @@ class Ui_MainWindow(object):
         self.label_3.setGeometry(QtCore.QRect(460, 30, 191, 51))
         self.label_3.setObjectName("label_3")
         self.label_9 = QtWidgets.QLabel(self.tab_screen_2)
-        self.label_9.setGeometry(QtCore.QRect(440, 560, 191, 31))
+        self.label_9.setGeometry(QtCore.QRect(430, 560, 191, 31))
         self.label_9.setObjectName("label_9")
         self.tab_screen.addTab(self.tab_screen_2, "")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -259,12 +291,16 @@ class Ui_MainWindow(object):
         self.le_kfold.setText(_translate("MainWindow", "10"))
         self.pb_select_all_features.setText(_translate("MainWindow", "Select all features"))
         self.cb_mfcc_derivative.setText(_translate("MainWindow", "MFCC Derivative"))
+        self.precision_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">PRECISION</span></p></body></html>"))
+        self.recall_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">RECALL</span></p></body></html>"))
+        self.label_10.setText(_translate("MainWindow", "<html><head/><body><p>PRECISION</p></body></html>"))
+        self.label_11.setText(_translate("MainWindow", "<html><head/><body><p>RECALL</p></body></html>"))
         self.tab_screen.setTabText(self.tab_screen.indexOf(self.tab_screen_1), _translate("MainWindow", "Classification Results"))
         self.start_genre_classification.setText(_translate("MainWindow", "Import Music File"))
         self.genre_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">ESTIMATED GENRE</span></p></body></html>"))
         self.genre_music_name_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">NAME OF THE MUSIC</p></body></html>"))
         self.label_3.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:18pt; font-weight:600;\">Waveplot</span></p></body></html>"))
-        self.label_9.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">Estimated Genre</span></p></body></html>"))
+        self.label_9.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:16pt; font-weight:600;\">Estimated Genre</span></p></body></html>"))
         self.tab_screen.setTabText(self.tab_screen.indexOf(self.tab_screen_2), _translate("MainWindow", "Genre Estimation"))
         self.import_file.setText(_translate("MainWindow", "Import Music"))
         self.actionZero_Crossing_Rate.setText(_translate("MainWindow", "Zero Crossing Rate"))
