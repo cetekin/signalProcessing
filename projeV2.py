@@ -8,6 +8,7 @@
 
 import multiprocessing
 multiprocessing.freeze_support()
+
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QUrl
@@ -35,6 +36,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import precision_score
+from sklearn.metrics import f1_score
 
 
 
@@ -121,7 +123,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.avg_accuracy_label = QtWidgets.QLabel(self.tab_screen_1)
-        self.avg_accuracy_label.setGeometry(QtCore.QRect(470, 700, 271, 71))
+        self.avg_accuracy_label.setGeometry(QtCore.QRect(480, 750, 161, 41))
         self.avg_accuracy_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
@@ -136,21 +138,21 @@ class Ui_MainWindow(object):
         self.con_matrix_label.setText("")
         self.con_matrix_label.setObjectName("con_matrix_label")
         self.label_6 = QtWidgets.QLabel(self.tab_screen_1)
-        self.label_6.setGeometry(QtCore.QRect(660, 30, 171, 31))
+        self.label_6.setGeometry(QtCore.QRect(660, 30, 231, 31))
         self.label_6.setStyleSheet("QLabel {\n"
 "color: black;\n"
 "font-weight: bold;\n"
 "}")
         self.label_6.setObjectName("label_6")
         self.label_7 = QtWidgets.QLabel(self.tab_screen_1)
-        self.label_7.setGeometry(QtCore.QRect(550, 660, 151, 31))
+        self.label_7.setGeometry(QtCore.QRect(500, 720, 151, 31))
         self.label_7.setStyleSheet("QLabel {\n"
 "color: black;\n"
 "font-weight: bold;\n"
 "}")
         self.label_7.setObjectName("label_7")
         self.max_accuracy_label = QtWidgets.QLabel(self.tab_screen_1)
-        self.max_accuracy_label.setGeometry(QtCore.QRect(470, 560, 271, 71))
+        self.max_accuracy_label.setGeometry(QtCore.QRect(480, 550, 161, 41))
         self.max_accuracy_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
@@ -159,7 +161,7 @@ class Ui_MainWindow(object):
         self.max_accuracy_label.setAlignment(QtCore.Qt.AlignCenter)
         self.max_accuracy_label.setObjectName("max_accuracy_label")
         self.label_8 = QtWidgets.QLabel(self.tab_screen_1)
-        self.label_8.setGeometry(QtCore.QRect(550, 520, 151, 31))
+        self.label_8.setGeometry(QtCore.QRect(500, 520, 151, 31))
         self.label_8.setStyleSheet("QLabel {\n"
 "color: black;\n"
 "font-weight: bold;\n"
@@ -206,17 +208,17 @@ class Ui_MainWindow(object):
         self.cb_mfcc_derivative = QtWidgets.QCheckBox(self.tab_screen_1)
         self.cb_mfcc_derivative.setGeometry(QtCore.QRect(250, 280, 171, 20))
         self.cb_mfcc_derivative.setObjectName("cb_mfcc_derivative")
-        self.precision_label = QtWidgets.QLabel(self.tab_screen_1)
-        self.precision_label.setGeometry(QtCore.QRect(750, 560, 271, 71))
-        self.precision_label.setStyleSheet("QLabel{\n"
+        self.fscore_label = QtWidgets.QLabel(self.tab_screen_1)
+        self.fscore_label.setGeometry(QtCore.QRect(810, 550, 161, 41))
+        self.fscore_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
 "font-weight: bold;\n"
 "}")
-        self.precision_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.precision_label.setObjectName("precision_label")
+        self.fscore_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.fscore_label.setObjectName("fscore_label")
         self.recall_label = QtWidgets.QLabel(self.tab_screen_1)
-        self.recall_label.setGeometry(QtCore.QRect(750, 700, 271, 71))
+        self.recall_label.setGeometry(QtCore.QRect(810, 650, 161, 41))
         self.recall_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
@@ -225,19 +227,51 @@ class Ui_MainWindow(object):
         self.recall_label.setAlignment(QtCore.Qt.AlignCenter)
         self.recall_label.setObjectName("recall_label")
         self.label_10 = QtWidgets.QLabel(self.tab_screen_1)
-        self.label_10.setGeometry(QtCore.QRect(840, 520, 151, 31))
+        self.label_10.setGeometry(QtCore.QRect(850, 520, 151, 31))
         self.label_10.setStyleSheet("QLabel {\n"
 "color: black;\n"
 "font-weight: bold;\n"
 "}")
         self.label_10.setObjectName("label_10")
         self.label_11 = QtWidgets.QLabel(self.tab_screen_1)
-        self.label_11.setGeometry(QtCore.QRect(850, 660, 151, 31))
+        self.label_11.setGeometry(QtCore.QRect(850, 620, 151, 31))
         self.label_11.setStyleSheet("QLabel {\n"
 "color: black;\n"
 "font-weight: bold;\n"
 "}")
         self.label_11.setObjectName("label_11")
+        self.min_accuracy_label = QtWidgets.QLabel(self.tab_screen_1)
+        self.min_accuracy_label.setGeometry(QtCore.QRect(480, 650, 161, 41))
+        self.min_accuracy_label.setStyleSheet("QLabel{\n"
+"color: rgb(255, 255, 255);\n"
+"background-color:rgb(0, 0, 255);\n"
+"font-weight: bold;\n"
+"}")
+        self.min_accuracy_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.min_accuracy_label.setObjectName("min_accuracy_label")
+        self.label_12 = QtWidgets.QLabel(self.tab_screen_1)
+        self.label_12.setGeometry(QtCore.QRect(500, 620, 151, 31))
+        self.label_12.setStyleSheet("QLabel {\n"
+"color: black;\n"
+"font-weight: bold;\n"
+"}")
+        self.label_12.setObjectName("label_12")
+        self.precision_label = QtWidgets.QLabel(self.tab_screen_1)
+        self.precision_label.setGeometry(QtCore.QRect(810, 750, 161, 41))
+        self.precision_label.setStyleSheet("QLabel{\n"
+"color: rgb(255, 255, 255);\n"
+"background-color:rgb(0, 0, 255);\n"
+"font-weight: bold;\n"
+"}")
+        self.precision_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.precision_label.setObjectName("precision_label")
+        self.label_13 = QtWidgets.QLabel(self.tab_screen_1)
+        self.label_13.setGeometry(QtCore.QRect(840, 720, 151, 31))
+        self.label_13.setStyleSheet("QLabel {\n"
+"color: black;\n"
+"font-weight: bold;\n"
+"}")
+        self.label_13.setObjectName("label_13")
         self.tab_screen.addTab(self.tab_screen_1, "")
         self.tab_screen_2 = QtWidgets.QWidget()
         self.tab_screen_2.setObjectName("tab_screen_2")
@@ -299,7 +333,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Music Genre Classification"))
         self.rb_knn.setText(_translate("MainWindow", "K-NN"))
         self.rb_naive_bayes.setText(_translate("MainWindow", "Naive Bayes"))
         self.label_5.setText(_translate("MainWindow", "CLASSIFIER"))
@@ -315,7 +349,7 @@ class Ui_MainWindow(object):
         self.cb_spec_rollof.setText(_translate("MainWindow", "Spectral Rollof"))
         self.cb_mfcc.setText(_translate("MainWindow", "MFCC"))
         self.avg_accuracy_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">ACCURACY</span></p></body></html>"))
-        self.label_6.setText(_translate("MainWindow", "<html><head/><body><p>CONFUSION MATRIX</p></body></html>"))
+        self.label_6.setText(_translate("MainWindow", "<html><head/><body><p>AVG CONFUSION MATRIX</p></body></html>"))
         self.label_7.setText(_translate("MainWindow", "<html><head/><body><p>AVG ACCURACY</p></body></html>"))
         self.max_accuracy_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">ACCURACY</span></p></body></html>"))
         self.label_8.setText(_translate("MainWindow", "<html><head/><body><p>MAX ACCURACY</p></body></html>"))
@@ -329,10 +363,14 @@ class Ui_MainWindow(object):
         self.le_kfold.setText(_translate("MainWindow", "10"))
         self.pb_select_all_features.setText(_translate("MainWindow", "Select all features"))
         self.cb_mfcc_derivative.setText(_translate("MainWindow", "MFCC Derivative"))
-        self.precision_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">PRECISION</span></p></body></html>"))
+        self.fscore_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">F-SCORE</span></p></body></html>"))
         self.recall_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">RECALL</span></p></body></html>"))
-        self.label_10.setText(_translate("MainWindow", "<html><head/><body><p>PRECISION</p></body></html>"))
-        self.label_11.setText(_translate("MainWindow", "<html><head/><body><p>RECALL</p></body></html>"))
+        self.label_10.setText(_translate("MainWindow", "<html><head/><body><p>AVG F-SCORE</p></body></html>"))
+        self.label_11.setText(_translate("MainWindow", "<html><head/><body><p>AVG RECALL</p></body></html>"))
+        self.min_accuracy_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">ACCURACY</span></p></body></html>"))
+        self.label_12.setText(_translate("MainWindow", "<html><head/><body><p>MIN ACCURACY</p></body></html>"))
+        self.precision_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">PRECISION</span></p></body></html>"))
+        self.label_13.setText(_translate("MainWindow", "<html><head/><body><p>AVG PRECISION</p></body></html>"))
         self.tab_screen.setTabText(self.tab_screen.indexOf(self.tab_screen_1), _translate("MainWindow", "Classification Results"))
         self.start_genre_classification.setText(_translate("MainWindow", "Import Music File"))
         self.genre_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; text-decoration: underline;\">ESTIMATED GENRE</span></p></body></html>"))
@@ -637,7 +675,7 @@ class Ui_MainWindow(object):
                 classifier = KNeighborsClassifier(n_neighbors=int(self.le_knn.text()), weights='distance')
 
             if self.rb_svm.isChecked() == True:
-                classifier = SVC(kernel='linear', random_state=42)
+                classifier = SVC(kernel='poly', random_state=42, gamma=1/25) 
 
             if self.rb_naive_bayes.isChecked() == True:
                 classifier = GaussianNB()
@@ -657,9 +695,11 @@ class Ui_MainWindow(object):
             total_acc = 0
             init_flag = 0
             max_acc = 0
+            min_acc = 1.0
             resulting_cm = []  #resulting confusion matrix will be calculated cumulatively as k fold cross validation advances
             precision = 0
             recall = 0
+            f1 = 0
 
 
             for train_index,test_index in cross_validator.split(x_data):
@@ -674,9 +714,13 @@ class Ui_MainWindow(object):
                 if acc > max_acc:
                     max_acc = acc
 
+                elif acc < min_acc:
+                    min_acc = acc
+
                 cm = confusion_matrix(y_test,y_pred)
                 precision += precision_score(y_test, y_pred, average='macro')
                 recall += recall_score(y_test, y_pred, average='macro')
+                f1 += f1_score(y_test, y_pred, average='macro')
 
                 if init_flag == 0:
                     resulting_cm = cm
@@ -688,20 +732,29 @@ class Ui_MainWindow(object):
 
 
 
-            print("precision:",100*(precision/int(self.le_kfold.text()))) #degisecek
-            print("recall:",100*(recall/int(self.le_kfold.text()))) #degisecek
+            #print("precision:",100*(precision/int(self.le_kfold.text()))) #degisecek
+            #print("recall:",100*(recall/int(self.le_kfold.text()))) #degisecek
+	    #print("f1_score:",100*(recall/int(self.le_kfold.text()))) #degisecek
 
 
             avg_acc = total_acc / int(self.le_kfold.text())
             avg_acc *= 100
+            #Avg acc
             self.avg_accuracy_label.setScaledContents(True)
             self.avg_accuracy_label.setText(("%%%.2f" % avg_acc))
             self.avg_accuracy_label.setStyleSheet("QLabel {font: 30pt;color: rgb(255, 255, 255);background-color:rgb(0, 0, 255);text-align: center}")
 
+            #Max acc
             max_acc *= 100
             self.max_accuracy_label.setScaledContents(True)
             self.max_accuracy_label.setText(("%%%.2f" % max_acc))
             self.max_accuracy_label.setStyleSheet("QLabel {font: 30pt;color: rgb(255, 255, 255);background-color:rgb(0, 0, 255);text-align: center}")
+
+            #Min acc
+            min_acc *= 100
+            self.min_accuracy_label.setScaledContents(True)
+            self.min_accuracy_label.setText(("%%%.2f" % min_acc))
+            self.min_accuracy_label.setStyleSheet("QLabel {font: 30pt;color: rgb(255, 255, 255);background-color:rgb(0, 0, 255);text-align: center}")
 
             #Precision showing
             precision = 100*(precision/int(self.le_kfold.text()))
@@ -709,10 +762,18 @@ class Ui_MainWindow(object):
             self.precision_label.setText(("%%%.2f" % precision))
             self.precision_label.setStyleSheet("QLabel {font: 30pt;color: rgb(255, 255, 255);background-color:rgb(0, 0, 255);text-align: center}")
 
+            #Recall showing
             recall = 100*(recall/int(self.le_kfold.text()))
             self.recall_label.setScaledContents(True)
             self.recall_label.setText(("%%%.2f" % recall))
             self.recall_label.setStyleSheet("QLabel {font: 30pt;color: rgb(255, 255, 255);background-color:rgb(0, 0, 255);text-align: center}")
+
+            #F-score showing
+            f1 = 100*(f1/int(self.le_kfold.text()))
+            self.fscore_label.setScaledContents(True)
+            self.fscore_label.setText(("%%%.2f" % f1))
+            self.fscore_label.setStyleSheet("QLabel {font: 30pt;color: rgb(255, 255, 255);background-color:rgb(0, 0, 255);text-align: center}")
+
 
             self.plot_confusion_matrix(resulting_cm, classes=["blues", "classical", "country", "disco", "hiphop", "jazz", "metal", "pop", "reggae", "rock"])
             self.con_matrix_label.setScaledContents(True)

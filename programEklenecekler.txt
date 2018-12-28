@@ -1,0 +1,4 @@
+1. Sınıflandırma modeli yoksa müzik tahmin etmesin
+2. K fold k = 1
+3. .au
+4. Tür tahmin ekranında müzik yüklenince hemen sınıflandırma başlamasın
