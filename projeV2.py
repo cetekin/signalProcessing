@@ -675,7 +675,7 @@ class Ui_MainWindow(object):
                 classifier = KNeighborsClassifier(n_neighbors=int(self.le_knn.text()), weights='distance')
 
             if self.rb_svm.isChecked() == True:
-                classifier = SVC(kernel='poly', random_state=42, gamma=1/25) 
+                classifier = SVC(kernel='linear', random_state=42)#, gamma=1/25) 
 
             if self.rb_naive_bayes.isChecked() == True:
                 classifier = GaussianNB()
