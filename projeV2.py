@@ -430,7 +430,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Music Genre Classification"))
         self.rb_knn.setText(_translate("MainWindow", "K-NN"))
         self.rb_naive_bayes.setText(_translate("MainWindow", "Naive Bayes"))
         self.label_5.setText(_translate("MainWindow", "CLASSIFIER"))
@@ -1258,11 +1258,13 @@ class Ui_MainWindow(object):
 
 
             #Secilen muzik ozellik cekimi
+            
             query = "SELECT " + cols + " FROM songs WHERE song_name=?"
             test_features = pd.read_sql(sql=query, con=db_con, params=(test_music_name,))
+            print(test_features)
             x = test_features.drop(["song_name"],axis=1)
-            normalizer_test.fit(x)
-            x_test =  normalizer_test.transform(x.values)
+            #normalizer_test.fit(x)
+            x_test =  normalizer.transform(x.values)
 
 
             Y_pred = classifier.predict(x_test)
