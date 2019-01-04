@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'arayuzV2_backup.ui'
+# Form implementation generated from reading ui file '.\arayuzV2_backup.ui'
 #
 # Created by: PyQt5 UI code generator 5.11.3
 #
@@ -241,7 +241,7 @@ class Ui_MainWindow(object):
         self.waveplot_label.setText("")
         self.waveplot_label.setObjectName("waveplot_label")
         self.start_genre_classification = QtWidgets.QPushButton(self.tab_screen_2)
-        self.start_genre_classification.setGeometry(QtCore.QRect(450, 550, 151, 31))
+        self.start_genre_classification.setGeometry(QtCore.QRect(450, 570, 151, 31))
         self.start_genre_classification.setStyleSheet("QPushButton{\n"
 "background-color: rgb(142, 157, 255);\n"
 "font-weight: bold;\n"
@@ -257,7 +257,7 @@ class Ui_MainWindow(object):
         self.genre_label.setAlignment(QtCore.Qt.AlignCenter)
         self.genre_label.setObjectName("genre_label")
         self.genre_music_name_label = QtWidgets.QLabel(self.tab_screen_2)
-        self.genre_music_name_label.setGeometry(QtCore.QRect(340, 410, 371, 31))
+        self.genre_music_name_label.setGeometry(QtCore.QRect(340, 410, 371, 41))
         self.genre_music_name_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
@@ -268,7 +268,7 @@ class Ui_MainWindow(object):
         self.label_3.setGeometry(QtCore.QRect(460, 30, 191, 51))
         self.label_3.setObjectName("label_3")
         self.label_9 = QtWidgets.QLabel(self.tab_screen_2)
-        self.label_9.setGeometry(QtCore.QRect(430, 640, 191, 31))
+        self.label_9.setGeometry(QtCore.QRect(400, 640, 271, 31))
         self.label_9.setObjectName("label_9")
         self.rb_naive_bayes_4 = QtWidgets.QRadioButton(self.tab_screen_2)
         self.rb_naive_bayes_4.setGeometry(QtCore.QRect(50, 110, 121, 20))
@@ -341,7 +341,7 @@ class Ui_MainWindow(object):
         self.cb_spec_rollof_4.setGeometry(QtCore.QRect(40, 430, 161, 20))
         self.cb_spec_rollof_4.setObjectName("cb_spec_rollof_4")
         self.select_music_file = QtWidgets.QPushButton(self.tab_screen_2)
-        self.select_music_file.setGeometry(QtCore.QRect(450, 480, 151, 31))
+        self.select_music_file.setGeometry(QtCore.QRect(450, 530, 151, 31))
         self.select_music_file.setStyleSheet("QPushButton{\n"
 "background-color: rgb(142, 157, 255);\n"
 "font-weight: bold;\n"
@@ -353,6 +353,20 @@ class Ui_MainWindow(object):
         self.knn_sb_4 = QtWidgets.QSpinBox(self.tab_screen_2)
         self.knn_sb_4.setGeometry(QtCore.QRect(170, 75, 48, 31))
         self.knn_sb_4.setObjectName("knn_sb_4")
+        self.play_button = QtWidgets.QPushButton(self.tab_screen_2)
+        self.play_button.setGeometry(QtCore.QRect(370, 460, 151, 31))
+        self.play_button.setStyleSheet("QPushButton{\n"
+"background-color: rgb(0, 255, 0);\n"
+"font-weight: bold;\n"
+"}")
+        self.play_button.setObjectName("play_button")
+        self.stop_button = QtWidgets.QPushButton(self.tab_screen_2)
+        self.stop_button.setGeometry(QtCore.QRect(530, 460, 151, 31))
+        self.stop_button.setStyleSheet("QPushButton{\n"
+"background-color: rgb(255, 0, 0);\n"
+"font-weight: bold;\n"
+"}")
+        self.stop_button.setObjectName("stop_button")
         self.tab_screen.addTab(self.tab_screen_2, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.import_file = QtWidgets.QAction(MainWindow)
@@ -439,6 +453,8 @@ class Ui_MainWindow(object):
         self.cb_spec_rollof_4.setText(_translate("MainWindow", "Spectral Rollof"))
         self.select_music_file.setText(_translate("MainWindow", "Select Music File"))
         self.knn_label_4.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">K: </span></p></body></html>"))
+        self.play_button.setText(_translate("MainWindow", "PLAY"))
+        self.stop_button.setText(_translate("MainWindow", "STOP"))
         self.tab_screen.setTabText(self.tab_screen.indexOf(self.tab_screen_2), _translate("MainWindow", "Genre Estimation"))
         self.import_file.setText(_translate("MainWindow", "Import Music"))
         self.actionZero_Crossing_Rate.setText(_translate("MainWindow", "Zero Crossing Rate"))
