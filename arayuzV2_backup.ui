@@ -45,7 +45,7 @@ background-color: rgb(222, 249, 255);
      <string notr="true">background-color: rgb(222, 249, 255);</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_screen_1">
      <attribute name="title">
@@ -729,7 +729,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>450</x>
-        <y>570</y>
+        <y>610</y>
         <width>151</width>
         <height>31</height>
        </rect>
@@ -748,7 +748,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>380</x>
-        <y>680</y>
+        <y>700</y>
         <width>271</width>
         <height>71</height>
        </rect>
@@ -771,9 +771,9 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>340</x>
-        <y>410</y>
+        <y>480</y>
         <width>371</width>
-        <height>41</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -805,8 +805,8 @@ background-color:rgb(0, 0, 255);
      <widget class="QLabel" name="label_9">
       <property name="geometry">
        <rect>
-        <x>400</x>
-        <y>640</y>
+        <x>430</x>
+        <y>660</y>
         <width>271</width>
         <height>31</height>
        </rect>
@@ -1085,7 +1085,7 @@ color: rgb(255, 255, 255)
       <property name="geometry">
        <rect>
         <x>450</x>
-        <y>530</y>
+        <y>420</y>
         <width>151</width>
         <height>31</height>
        </rect>
@@ -1127,7 +1127,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>370</x>
-        <y>460</y>
+        <y>520</y>
         <width>151</width>
         <height>31</height>
        </rect>
@@ -1146,7 +1146,7 @@ font-weight: bold;
       <property name="geometry">
        <rect>
         <x>530</x>
-        <y>460</y>
+        <y>520</y>
         <width>151</width>
         <height>31</height>
        </rect>
@@ -1160,6 +1160,78 @@ font-weight: bold;
       <property name="text">
        <string>STOP</string>
       </property>
+     </widget>
+     <widget class="QWidget" name="loading_wid" native="true">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>480</y>
+        <width>431</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <widget class="QProgressBar" name="prog_load">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>70</y>
+         <width>221</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="value">
+        <number>24</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>-20</x>
+         <y>30</y>
+         <width>452</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Loading the music file. Please wait!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="estimate_wid" native="true">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>660</y>
+        <width>401</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <widget class="QLabel" name="label_15">
+       <property name="geometry">
+        <rect>
+         <x>-40</x>
+         <y>20</y>
+         <width>452</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Estimating the music genre. Please wait!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+      <widget class="QProgressBar" name="prog_load_3">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>60</y>
+         <width>221</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="value">
+        <number>24</number>
+       </property>
+      </widget>
      </widget>
     </widget>
    </widget>

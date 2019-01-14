@@ -15,15 +15,15 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMenu, QVBoxLayout, QSizePolicy, QMessageBox, QWidget, QPushButton, QFileDialog, QDialog, QMessageBox
 import librosa
-#import essentia
-#import essentia.standard as es
+import essentia
+import essentia.standard as es
 import librosa.display
 import numpy as np
 import sqlite3
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import itertools
-import winsound
+#import winsound
 import pandas as pd
 from sklearn import model_selection, preprocessing, metrics
 from sklearn.naive_bayes import GaussianNB
@@ -37,7 +37,8 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import f1_score
-
+import pygame
+from PyQt5.QtCore import QBasicTimer
 
 
 
@@ -282,14 +283,14 @@ class Ui_MainWindow(object):
         self.waveplot_label.setText("")
         self.waveplot_label.setObjectName("waveplot_label")
         self.start_genre_classification = QtWidgets.QPushButton(self.tab_screen_2)
-        self.start_genre_classification.setGeometry(QtCore.QRect(450, 570, 151, 31))
+        self.start_genre_classification.setGeometry(QtCore.QRect(450, 610, 151, 31))
         self.start_genre_classification.setStyleSheet("QPushButton{\n"
 "background-color: rgb(142, 157, 255);\n"
 "font-weight: bold;\n"
 "}")
         self.start_genre_classification.setObjectName("start_genre_classification")
         self.genre_label = QtWidgets.QLabel(self.tab_screen_2)
-        self.genre_label.setGeometry(QtCore.QRect(380, 680, 271, 71))
+        self.genre_label.setGeometry(QtCore.QRect(380, 700, 271, 71))
         self.genre_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
@@ -298,7 +299,7 @@ class Ui_MainWindow(object):
         self.genre_label.setAlignment(QtCore.Qt.AlignCenter)
         self.genre_label.setObjectName("genre_label")
         self.genre_music_name_label = QtWidgets.QLabel(self.tab_screen_2)
-        self.genre_music_name_label.setGeometry(QtCore.QRect(340, 410, 371, 41))
+        self.genre_music_name_label.setGeometry(QtCore.QRect(340, 480, 371, 31))
         self.genre_music_name_label.setStyleSheet("QLabel{\n"
 "color: rgb(255, 255, 255);\n"
 "background-color:rgb(0, 0, 255);\n"
@@ -309,7 +310,7 @@ class Ui_MainWindow(object):
         self.label_3.setGeometry(QtCore.QRect(460, 30, 191, 51))
         self.label_3.setObjectName("label_3")
         self.label_9 = QtWidgets.QLabel(self.tab_screen_2)
-        self.label_9.setGeometry(QtCore.QRect(400, 640, 271, 31))
+        self.label_9.setGeometry(QtCore.QRect(430, 660, 271, 31))
         self.label_9.setObjectName("label_9")
         self.rb_naive_bayes_4 = QtWidgets.QRadioButton(self.tab_screen_2)
         self.rb_naive_bayes_4.setGeometry(QtCore.QRect(50, 110, 121, 20))
@@ -382,7 +383,7 @@ class Ui_MainWindow(object):
         self.cb_spec_rollof_4.setGeometry(QtCore.QRect(40, 430, 161, 20))
         self.cb_spec_rollof_4.setObjectName("cb_spec_rollof_4")
         self.select_music_file = QtWidgets.QPushButton(self.tab_screen_2)
-        self.select_music_file.setGeometry(QtCore.QRect(450, 530, 151, 31))
+        self.select_music_file.setGeometry(QtCore.QRect(450, 420, 151, 31))
         self.select_music_file.setStyleSheet("QPushButton{\n"
 "background-color: rgb(142, 157, 255);\n"
 "font-weight: bold;\n"
@@ -395,19 +396,39 @@ class Ui_MainWindow(object):
         self.knn_sb_4.setGeometry(QtCore.QRect(170, 75, 48, 31))
         self.knn_sb_4.setObjectName("knn_sb_4")
         self.play_button = QtWidgets.QPushButton(self.tab_screen_2)
-        self.play_button.setGeometry(QtCore.QRect(370, 460, 151, 31))
+        self.play_button.setGeometry(QtCore.QRect(370, 520, 151, 31))
         self.play_button.setStyleSheet("QPushButton{\n"
 "background-color: rgb(0, 255, 0);\n"
 "font-weight: bold;\n"
 "}")
         self.play_button.setObjectName("play_button")
         self.stop_button = QtWidgets.QPushButton(self.tab_screen_2)
-        self.stop_button.setGeometry(QtCore.QRect(530, 460, 151, 31))
+        self.stop_button.setGeometry(QtCore.QRect(530, 520, 151, 31))
         self.stop_button.setStyleSheet("QPushButton{\n"
 "background-color: rgb(255, 0, 0);\n"
 "font-weight: bold;\n"
 "}")
         self.stop_button.setObjectName("stop_button")
+        self.loading_wid = QtWidgets.QWidget(self.tab_screen_2)
+        self.loading_wid.setGeometry(QtCore.QRect(310, 480, 431, 111))
+        self.loading_wid.setObjectName("loading_wid")
+        self.prog_load = QtWidgets.QProgressBar(self.loading_wid)
+        self.prog_load.setGeometry(QtCore.QRect(100, 70, 221, 25))
+        self.prog_load.setProperty("value", 24)
+        self.prog_load.setObjectName("prog_load")
+        self.label = QtWidgets.QLabel(self.loading_wid)
+        self.label.setGeometry(QtCore.QRect(-20, 30, 452, 22))
+        self.label.setObjectName("label")
+        self.estimate_wid = QtWidgets.QWidget(self.tab_screen_2)
+        self.estimate_wid.setGeometry(QtCore.QRect(330, 660, 401, 111))
+        self.estimate_wid.setObjectName("estimate_wid")
+        self.label_15 = QtWidgets.QLabel(self.estimate_wid)
+        self.label_15.setGeometry(QtCore.QRect(-40, 20, 452, 22))
+        self.label_15.setObjectName("label_15")
+        self.prog_load_3 = QtWidgets.QProgressBar(self.estimate_wid)
+        self.prog_load_3.setGeometry(QtCore.QRect(80, 60, 221, 25))
+        self.prog_load_3.setProperty("value", 24)
+        self.prog_load_3.setObjectName("prog_load_3")
         self.tab_screen.addTab(self.tab_screen_2, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.import_file = QtWidgets.QAction(MainWindow)
@@ -430,7 +451,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Music Genre Classification"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.rb_knn.setText(_translate("MainWindow", "K-NN"))
         self.rb_naive_bayes.setText(_translate("MainWindow", "Naive Bayes"))
         self.label_5.setText(_translate("MainWindow", "CLASSIFIER"))
@@ -496,6 +517,8 @@ class Ui_MainWindow(object):
         self.knn_label_4.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">K: </span></p></body></html>"))
         self.play_button.setText(_translate("MainWindow", "PLAY"))
         self.stop_button.setText(_translate("MainWindow", "STOP"))
+        self.label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:12pt; font-weight:600;\">Loading the music file. Please wait!</span></p></body></html>"))
+        self.label_15.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:12pt; font-weight:600;\">Estimating the music genre. Please wait!</span></p></body></html>"))
         self.tab_screen.setTabText(self.tab_screen.indexOf(self.tab_screen_2), _translate("MainWindow", "Genre Estimation"))
         self.import_file.setText(_translate("MainWindow", "Import Music"))
         self.actionZero_Crossing_Rate.setText(_translate("MainWindow", "Zero Crossing Rate"))
@@ -503,6 +526,7 @@ class Ui_MainWindow(object):
         self.actionImport_Multiple_Music_Files.setText(_translate("MainWindow", "Import Multiple Music Files"))
         self.use_existing_db_action.setText(_translate("MainWindow", "Use Existing Database (Default)"))
         self.create_new_db_action.setText(_translate("MainWindow", "Create a New Database"))
+
 
         #qt designer bitis
 
@@ -512,6 +536,8 @@ class Ui_MainWindow(object):
         self.pb_select_all_features_4.clicked.connect(self.select_all_features_genretab)
         self.select_music_file.clicked.connect(self.import_music)
         self.start_genre_classification.clicked.connect(self.estimate_music_genre)
+        self.loading_wid.setVisible(False)
+        self.estimate_wid.setVisible(False)
         self.knn_label.setVisible(False)
         self.knn_sb.setVisible(False)
         self.knn_sb.setValue(1)
@@ -525,6 +551,11 @@ class Ui_MainWindow(object):
         self.rb_knn_4.toggled.connect(self.manage_hidden_sb)
         self.play_button.clicked.connect(self.genre_play_music)
         self.stop_button.clicked.connect(self.genre_stop_music)
+
+        pygame.mixer.init()
+
+
+
 
 
 
@@ -556,25 +587,32 @@ class Ui_MainWindow(object):
 
 
     def import_music(self):
+        self.prog_load.setValue(1)
+        self.loading_wid.setVisible(True)
         options = QFileDialog.Options()
+
         fname,ok = QFileDialog.getOpenFileName(self.mainwindow, 'Import music file','', 'Music files (*.mp3 *.wav *.au)',options=options)
         self.test_music_path = fname
+        pygame.mixer.music.load(fname)
         if ok:
             #Music name display
             url = QUrl.fromLocalFile(fname)
             music_name = url.fileName()
             self.test_music_name = music_name
             self.genre_music_name_label.setText(music_name)
-            self.genre_music_name_label.setStyleSheet("QLabel {font: 20pt;color: rgb(255, 255, 255);background-color:rgb(0, 0, 255);text-align: center}")
+            self.genre_music_name_label.setStyleSheet("QLabel {font: 13pt;color: rgb(255, 255, 255);background-color:rgb(0, 0, 255);text-align: center}")
 
-
+            self.prog_load.setValue(35)
             #Waveplot drawing
             y, sr = librosa.load(fname)
+            self.prog_load.setValue(60)
             plt.figure()
             librosa.display.waveplot(y, sr=sr)
             plt.title('Waveplot of the Song')
+            self.prog_load.setValue(75)
             plt.savefig('fig2.png', bbox_inches="tight", pad_inches=0.3)
             self.waveplot_label.setPixmap(QtGui.QPixmap('fig2.png').scaled(371, 181, QtCore.Qt.KeepAspectRatioByExpanding, QtCore.Qt.SmoothTransformation))
+            self.prog_load.setValue(90)
             plt.clf()
 
             self.start_genre_classification.setEnabled(True)
@@ -586,8 +624,8 @@ class Ui_MainWindow(object):
 
             self.import_info_msg.setText("The music file is successfully loaded!")
             self.import_info_msg.show()
-
-
+            self.prog_load.setValue(100)
+            self.loading_wid.setVisible(False)
 
 
     def select_all_features(self):
@@ -618,194 +656,16 @@ class Ui_MainWindow(object):
         self.cb_mfcc_derivative_4.setChecked(True)
 
 
-    """
-    def write_features_to_feature_table(self,feature_list,music_name):
-        numRows = self.feature_table.rowCount()
-        self.feature_table.insertRow(numRows)
-        self.feature_table.setItem(numRows, 0, QtWidgets.QTableWidgetItem(music_name))
-        for i in range(44):
-            self.feature_table.setItem(numRows, i+1, QtWidgets.QTableWidgetItem(str(feature_list[i]) ) )
-    """
-
-
-
-    def create_db_table(self):
-        db_name, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Create New Database", "", "Database (*.db)")
-        self.db_name = db_name
-        db_conn = sqlite3.connect(db_name)
-        db_cursor = db_conn.cursor()
-
-        db_cursor.execute('''
-        CREATE TABLE songs(
-        song_name VARCHAR(200),
-        avg_zero_crs_rate REAL,
-        var_zero_crs_rate REAL,
-        avg_spec_centroid REAL,
-        var_spec_centroid REAL,
-        avg_spec_bandwidth REAL,
-        var_spec_bandwidth REAL,
-        avg_spec_contrast REAL,
-        var_spec_contrast REAL,
-        avg_spec_rolloff REAL,
-        var_spec_rolloff REAL,
-        avg_rmse REAL,
-        var_rmse REAL,
-        avg_mfcc_1 REAL,
-        avg_mfcc_2 REAL,
-        avg_mfcc_3 REAL,
-        avg_mfcc_4 REAL,
-        avg_mfcc_5 REAL,
-        avg_mfcc_6 REAL,
-        avg_mfcc_7 REAL,
-        avg_mfcc_8 REAL,
-        avg_mfcc_9 REAL,
-        avg_mfcc_10 REAL,
-        avg_mfcc_11 REAL,
-        avg_mfcc_12 REAL,
-        avg_mfcc_13 REAL,
-        avg_mfcc_14 REAL,
-        avg_mfcc_15 REAL,
-        avg_mfcc_16 REAL,
-        avg_mfcc_17 REAL,
-        avg_mfcc_18 REAL,
-        avg_mfcc_19 REAL,
-        avg_mfcc_20 REAL,
-        avg_chroma_stft_1 REAL,
-        avg_chroma_stft_2 REAL,
-        avg_chroma_stft_3 REAL,
-        avg_chroma_stft_4 REAL,
-        avg_chroma_stft_5 REAL,
-        avg_chroma_stft_6 REAL,
-        avg_chroma_stft_7 REAL,
-        avg_chroma_stft_8 REAL,
-        avg_chroma_stft_9 REAL,
-        avg_chroma_stft_10 REAL,
-        avg_chroma_stft_11 REAL,
-        avg_chroma_stft_12 REAL
-        )
-        ''')
-
-        db_conn.commit()
-        db_conn.close()
 
 
     def genre_play_music(self):
-        winsound.PlaySound(self.test_music_path,winsound.SND_ASYNC)
-
+        #winsound.PlaySound(self.test_music_path,winsound.SND_ASYNC)
+        pygame.mixer.music.play()
 
     def genre_stop_music(self):
-        winsound.PlaySound(None, winsound.SND_PURGE)
+        #winsound.PlaySound(None, winsound.SND_PURGE)
+        pygame.mixer.music.stop()
 
-
-
-    #Write given feature list of a specific song to the database
-    def write_features_to_database(self,feature_list,s_name,db_conn):
-        db_cursor = db_conn.cursor()
-
-        db_cursor.execute('''
-        INSERT INTO songs (
-        song_name,
-        avg_zero_crs_rate,
-        var_zero_crs_rate,
-        avg_spec_centroid,
-        var_spec_centroid,
-        avg_spec_bandwidth,
-        var_spec_bandwidth,
-        avg_spec_contrast,
-        var_spec_contrast,
-        avg_spec_rolloff,
-        var_spec_rolloff,
-        avg_rmse,
-        var_rmse,
-        avg_mfcc_1,
-        avg_mfcc_2,
-        avg_mfcc_3,
-        avg_mfcc_4,
-        avg_mfcc_5,
-        avg_mfcc_6,
-        avg_mfcc_7,
-        avg_mfcc_8,
-        avg_mfcc_9,
-        avg_mfcc_10,
-        avg_mfcc_11,
-        avg_mfcc_12,
-        avg_mfcc_13,
-        avg_mfcc_14,
-        avg_mfcc_15,
-        avg_mfcc_16,
-        avg_mfcc_17,
-        avg_mfcc_18,
-        avg_mfcc_19,
-        avg_mfcc_20,
-        avg_chroma_stft_1,
-        avg_chroma_stft_2,
-        avg_chroma_stft_3,
-        avg_chroma_stft_4,
-        avg_chroma_stft_5,
-        avg_chroma_stft_6,
-        avg_chroma_stft_7,
-        avg_chroma_stft_8,
-        avg_chroma_stft_9,
-        avg_chroma_stft_10,
-        avg_chroma_stft_11,
-        avg_chroma_stft_12
-        ) VALUES (
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?,
-        ?
-        )
-        ''',
-        (s_name,
-        *feature_list
-        )
-        )
-        db_conn.commit()
-
-
-    def use_existing_table(self):
-        self.db_name = "data.db"
 
 
     def start_classification(self):
@@ -1109,32 +969,46 @@ class Ui_MainWindow(object):
 
     def estimate_music_genre(self):
 
+        self.estimate_wid.setVisible(True)
         db_con = sqlite3.connect("data.db")
         feature_flag = 0
+        self.prog_load_3.setValue(15)
+        features_add = self.feature_extract(self.test_music_path)
+        used_features = []
 
+
+        #Model Creation
         cols = "song_name,"
 
         if self.cb_zcr_4.isChecked() == True:
             feature_flag = 1
+            used_features = np.append(used_features, features_add[0:3])
             cols = cols + "avg_zero_crs_rate,var_zero_crs_rate,med_zero_crs_rate,"
         if self.cb_spec_cen_4.isChecked() == True:
             feature_flag = 1
+            used_features = np.append(used_features, features_add[3:6])
             cols = cols + "avg_spec_centroid,var_spec_centroid,med_spec_centroid,"
         if self.cb_spec_ban_4.isChecked() == True:
             feature_flag = 1
+            used_features = np.append(used_features, features_add[6:9])
             cols = cols + "avg_spec_bandwidth,var_spec_bandwidth,med_spec_bandwidth,"
         if self.cb_spec_con_4.isChecked() == True:
             feature_flag = 1
+            used_features = np.append(used_features, features_add[9:12])
             cols = cols + "avg_spec_contrast,var_spec_contrast,med_spec_contrast,"
         if self.cb_spec_rollof_4.isChecked() == True:
             feature_flag = 1
+            used_features = np.append(used_features, features_add[12:15])
             cols = cols + "avg_spec_rolloff,var_spec_rolloff,med_spec_rolloff,"
         if self.cb_rmse_4.isChecked() == True:
             feature_flag = 1
+            used_features = np.append(used_features, features_add[15:18])
             cols = cols + "avg_rmse,var_rmse,med_rmse,"
 
         if self.cb_mfcc_4.isChecked() == True:
             feature_flag = 1
+            used_features = np.append(used_features, features_add[18:38])
+            used_features = np.append(used_features, features_add[99:119])
             for i in range(1,21):
                 cols = cols + "avg_mfcc_" + str(i) + ","
             for i in range(1,21):
@@ -1142,6 +1016,8 @@ class Ui_MainWindow(object):
 
         if self.cb_chroma_stft_4.isChecked() == True:
             feature_flag = 1
+            used_features = np.append(used_features, features_add[38:50])
+            used_features = np.append(used_features, features_add[119:131])
             for i in range(1,13):
                 cols = cols + "avg_chroma_stft_" + str(i) + ","
             for i in range(1,13):
@@ -1150,6 +1026,7 @@ class Ui_MainWindow(object):
 
         if self.cb_gfcc_4.isChecked() == True:
             feature_flag = 1
+            used_features = np.append(used_features, features_add[50:63])
             for i in range(1,14):
                 cols = cols + "avg_gfcc_" + str(i) + ","
 
@@ -1157,12 +1034,14 @@ class Ui_MainWindow(object):
 
         if self.cb_hpcp_4.isChecked() == True:
             feature_flag = 1
+            used_features = np.append(used_features, features_add[63:99])
             for i in range(1,37):
                 cols = cols + "avg_hpcp_" + str(i) + ","
 
 
         if self.cb_mfcc_derivative_4.isChecked() == True:
             feature_flag = 1
+            used_features = np.append(used_features, features_add[131:171])
             for i in range(1,21):
                 cols = cols + "avg_mfcc_derivative_" + str(i) + ","
                 cols = cols + "var_mfcc_derivative_" + str(i) + ","
@@ -1176,7 +1055,7 @@ class Ui_MainWindow(object):
         query = "SELECT " + cols + " FROM songs"
         database_features = pd.read_sql(sql=query, con=db_con)
 
-
+        self.prog_load_3.setValue(86)
 
         if feature_flag == 1  and self.knn_sb_4.value() != 0:
 
@@ -1244,29 +1123,18 @@ class Ui_MainWindow(object):
                 classifier = RandomForestClassifier(criterion='entropy', random_state=42)
 
 
-
+            #Siniflandirma Modeli Tamamlandi
             classifier.fit(x_data,y_data)
 
 
-            normalizer_test = preprocessing.MinMaxScaler((-1,1))
+
+            #Secilen Muzik Normalizasyon
+            used_features = used_features.reshape(1,-1)
+            x_test  = normalizer.transform(used_features)
 
 
 
-            test_music_name = self.test_music_name
-            test_music_name = test_music_name[0:-4] # .wav silindi
-            test_music_name = test_music_name + ".au" # .au uzanti eklendi
-
-
-            #Secilen muzik ozellik cekimi
-            
-            query = "SELECT " + cols + " FROM songs WHERE song_name=?"
-            test_features = pd.read_sql(sql=query, con=db_con, params=(test_music_name,))
-            print(test_features)
-            x = test_features.drop(["song_name"],axis=1)
-            #normalizer_test.fit(x)
-            x_test =  normalizer.transform(x.values)
-
-
+            #Tur Tahmini
             Y_pred = classifier.predict(x_test)
 
 
@@ -1282,8 +1150,14 @@ class Ui_MainWindow(object):
             if Y_pred == 9: self.genre_label.setText("Rock")
 
             self.genre_label.setStyleSheet("QLabel {font: 30pt;color: rgb(255, 255, 255);background-color:rgb(0, 0, 255);text-align: center}")
-
             db_con.close()
+            self.estimate_wid.setVisible(False)
+
+            self.import_info_msg.setIcon(QMessageBox.Information)
+            self.import_info_msg.setWindowTitle("Music Genre Information")
+
+            self.import_info_msg.setText("Genre of the music is successfully estimated!")
+            self.import_info_msg.show()
 
 
         else:
@@ -1296,7 +1170,9 @@ class Ui_MainWindow(object):
 
 
 
-            self.error_msg.show()    
+            self.error_msg.show()
+            db_con.close()
+            self.estimate_wid.setVisible(False)
 
 
 
@@ -1312,27 +1188,26 @@ class Ui_MainWindow(object):
                                              np.average(librosa.feature.spectral_rolloff(y,sr)),np.var(librosa.feature.spectral_rolloff(y,sr)),np.median(librosa.feature.spectral_rolloff(y,sr)),
                                                        np.average(librosa.feature.rmse(y)),np.var(librosa.feature.rmse(y)),np.median(librosa.feature.rmse(y))])
 
-
+        self.prog_load_3.setValue(26)
 
 
 
         #calculate and add avg mfcc
         tmp_mfcc=librosa.feature.mfcc(y,sr)
-
+        self.prog_load_3.setValue(34)
         tmpp=[None]*20
         for i in range(20):
             tmpp[i]=np.average(tmp_mfcc[i])
         total_features=np.append(total_features,np.array(tmpp))
-
+        self.prog_load_3.setValue(45)
         #calculate and add avg chroma_stft
         tmp_chroma_stft=librosa.feature.chroma_stft(y,sr)
-
         tmpp=[None]*12
         for i in range(12):
             tmpp[i]=np.average(tmp_chroma_stft[i])
         total_features=np.append(total_features,np.array(tmpp))
 
-
+        self.prog_load_3.setValue(56)
         #essentia features
         features, features_frames = es.MusicExtractor(lowlevelStats=['mean', 'stdev'],
                                                       rhythmStats=['mean', 'stdev'],
@@ -1340,6 +1215,7 @@ class Ui_MainWindow(object):
 
 
 
+        self.prog_load_3.setValue(62)
 
         #calculate and add avg gfcc
         avg_gfcc_vector = features["lowlevel.gfcc.mean"]
@@ -1390,9 +1266,7 @@ class Ui_MainWindow(object):
             j = j+2
         total_features = np.append(total_features, np.array(mfcc_derivative_avgs_stds))
 
-
-
-
+        self.prog_load_3.setValue(73)
         return total_features
 
 
