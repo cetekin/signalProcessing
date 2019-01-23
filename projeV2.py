@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 import multiprocessing
-multiprocessing.freeze_support()
+#multiprocessing.freeze_support()
 
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -39,6 +39,15 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import f1_score
 import pygame
 from PyQt5.QtCore import QBasicTimer
+import time
+from keras.utils import np_utils
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.wrappers.scikit_learn import KerasClassifier
+
+
+#Shared memory for multiprocessing
+features_add = multiprocessing.Array('d', np.zeros(171, dtype=float))
 
 
 
@@ -557,10 +566,6 @@ class Ui_MainWindow(object):
 
 
 
-
-
-
-
     def manage_hidden_sb(self):
 
         if self.rb_knn.isChecked() == True:
@@ -723,17 +728,20 @@ class Ui_MainWindow(object):
             if self.rb_knn.isChecked() == True:
                 classifier = KNeighborsClassifier(n_neighbors=self.knn_sb.value(), weights='distance')
 
-            if self.rb_svm.isChecked() == True:
+            elif self.rb_svm.isChecked() == True:
                 classifier = SVC(kernel='linear', random_state=42)#, gamma=1/25)
 
-            if self.rb_naive_bayes.isChecked() == True:
+            elif self.rb_naive_bayes.isChecked() == True:
                 classifier = GaussianNB()
 
-            if self.rb_decision_tree.isChecked() == True:
+            elif self.rb_decision_tree.isChecked() == True:
                 classifier = DecisionTreeClassifier()
 
-            if self.rb_random_forest.isChecked() == True:
+            elif self.rb_random_forest.isChecked() == True:
                 classifier = RandomForestClassifier(criterion='entropy', random_state=42)
+
+            elif self.rb_ann.isChecked() == True:
+                classifier = KerasClassifier(build_fn=buid_NN_classifier, epochs=200, batch_size=5, verbose=0)
 
 
 
@@ -783,7 +791,7 @@ class Ui_MainWindow(object):
 
             #print("precision:",100*(precision/int(self.le_kfold.text()))) #degisecek
             #print("recall:",100*(recall/int(self.le_kfold.text()))) #degisecek
-	    #print("f1_score:",100*(recall/int(self.le_kfold.text()))) #degisecek
+	        #print("f1_score:",100*(recall/int(self.le_kfold.text()))) #degisecek
 
 
             avg_acc = total_acc / int(self.le_kfold.text())
@@ -855,28 +863,35 @@ class Ui_MainWindow(object):
 
         cols = "song_name,"
         self.feature_flag = 0
+        dim = 0
 
         if self.cb_zcr.isChecked() == True:
             self.feature_flag = 1
             cols = cols + "avg_zero_crs_rate,var_zero_crs_rate,med_zero_crs_rate,"
+            dim += 3
         if self.cb_spec_cen.isChecked() == True:
             self.feature_flag = 1
             cols = cols + "avg_spec_centroid,var_spec_centroid,med_spec_centroid,"
+            dim += 3
         if self.cb_spec_ban.isChecked() == True:
             self.feature_flag = 1
             cols = cols + "avg_spec_bandwidth,var_spec_bandwidth,med_spec_bandwidth,"
+            dim += 3
         if self.cb_spec_con.isChecked() == True:
             self.feature_flag = 1
             cols = cols + "avg_spec_contrast,var_spec_contrast,med_spec_contrast,"
+            dim += 3
         if self.cb_spec_rollof.isChecked() == True:
             self.feature_flag = 1
             cols = cols + "avg_spec_rolloff,var_spec_rolloff,med_spec_rolloff,"
+            dim += 3
         if self.cb_rmse.isChecked() == True:
             self.feature_flag = 1
             cols = cols + "avg_rmse,var_rmse,med_rmse,"
-
+            dim += 3
         if self.cb_mfcc.isChecked() == True:
             self.feature_flag = 1
+            dim += 40
             for i in range(1,21):
                 cols = cols + "avg_mfcc_" + str(i) + ","
             for i in range(1,21):
@@ -884,6 +899,7 @@ class Ui_MainWindow(object):
 
         if self.cb_chroma_stft.isChecked() == True:
             self.feature_flag = 1
+            dim += 24
             for i in range(1,13):
                 cols = cols + "avg_chroma_stft_" + str(i) + ","
             for i in range(1,13):
@@ -892,6 +908,7 @@ class Ui_MainWindow(object):
 
         if self.cb_gfcc.isChecked() == True:
             self.feature_flag = 1
+            dim += 13
             for i in range(1,14):
                 cols = cols + "avg_gfcc_" + str(i) + ","
 
@@ -899,6 +916,7 @@ class Ui_MainWindow(object):
 
         if self.cb_hpcp.isChecked() == True:
             self.feature_flag = 1
+            dim += 36
             for i in range(1,37):
                 cols = cols + "avg_hpcp_" + str(i) + ","
 
@@ -907,6 +925,7 @@ class Ui_MainWindow(object):
 
         if self.cb_mfcc_derivative.isChecked() == True:
             self.feature_flag = 1
+            dim += 40
             for i in range(1,21):
                 cols = cols + "avg_mfcc_derivative_" + str(i) + ","
                 cols = cols + "var_mfcc_derivative_" + str(i) + ","
@@ -914,7 +933,7 @@ class Ui_MainWindow(object):
 
 
 
-
+        self.dim = dim
         cols = cols[0:-1]
 
 
@@ -969,11 +988,40 @@ class Ui_MainWindow(object):
 
     def estimate_music_genre(self):
 
-        self.estimate_wid.setVisible(True)
+        global features_add
+        #self.estimate_wid.setVisible(True)
         db_con = sqlite3.connect("data.db")
         feature_flag = 0
-        self.prog_load_3.setValue(15)
+        #self.prog_load_3.setValue(15)
+
+
+        #y,sr = librosa.load(self.test_music_path)
+
+        threads = []
+        prev_time = time.time()
+
+        thread1 = FeatureExtraction(feature_name="HPCPandGFCC", song_name=self.test_music_path, y=None, sr=None)
+        thread2 = FeatureExtraction(feature_name=None, song_name=self.test_music_path, y=None, sr=None)
+
+        threads.append(thread1)
+        threads.append(thread2)
+
+
+        for init_thread in threads:
+            init_thread.start()
+
+        for init_thread in threads:
+            init_thread.join()
+
+        next_time = time.time()
+        print("Total time elapsed: ",next_time-prev_time)
+
+        '''
+        prev_time = time.time()
         features_add = self.feature_extract(self.test_music_path)
+        next_time = time.time()
+        print("Total time elapsed: ",next_time-prev_time)
+        '''
         used_features = []
 
 
@@ -1270,15 +1318,172 @@ class Ui_MainWindow(object):
         return total_features
 
 
+    #2-layered ANN model
+    def buid_NN_classifier(self):
+    	#create model
+	    model = Sequential()
+        #First hidden layer
+	    model.add(Dense(8, input_dim=self.dim, activation='relu'))
+        #Second hidden layer
+        model.add(Dense(6, activation='relu'))
+	    model.add(Dense(10, activation='softmax'))
+	    # Compile model
+	    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+	    return model
 
+
+
+
+class FeatureExtraction (multiprocessing.Process):
+    def __init__(self,feature_name, song_name, y, sr):
+        multiprocessing.Process.__init__(self)
+        self.feature_name = feature_name
+        self.song_name = song_name
+        self.y = y
+        self.sr = sr
+
+    def run(self):
+        global features_add
+        if self.feature_name == "LowLevel":
+            seconds = time.time()
+            print("Thread3 is processing...")
+            #Calculate and add low level features
+            features_add[0:18] = np.array([np.average(librosa.feature.zero_crossing_rate(self.y)),np.var(librosa.feature.zero_crossing_rate(self.y)),np.median(librosa.feature.zero_crossing_rate(self.y)),
+                   np.average(librosa.feature.spectral_centroid(self.y,self.sr)),np.var(librosa.feature.spectral_centroid(self.y,self.sr)),np.median(librosa.feature.spectral_centroid(self.y,self.sr)),
+                             np.average(librosa.feature.spectral_bandwidth(self.y,self.sr)),np.var(librosa.feature.spectral_bandwidth(self.y,self.sr)),np.median(librosa.feature.spectral_bandwidth(self.y,self.sr)),
+                                       np.average(librosa.feature.spectral_contrast(self.y,self.sr)),np.var(librosa.feature.spectral_contrast(self.y,self.sr)),np.median(librosa.feature.spectral_contrast(self.y,self.sr)),
+                                                 np.average(librosa.feature.spectral_rolloff(self.y,self.sr)),np.var(librosa.feature.spectral_rolloff(self.y,self.sr)),np.median(librosa.feature.spectral_rolloff(self.y,self.sr)),
+                                                           np.average(librosa.feature.rmse(self.y)),np.var(librosa.feature.rmse(self.y)),np.median(librosa.feature.rmse(self.y))])
+
+            newsec = time.time()
+            print("Thread3 is done! Time: ",newsec-seconds)
+
+        elif self.feature_name == "MFCC":
+            seconds = time.time()
+            print("Thread4 is processing...")
+            #Calculate and add avg mfcc
+            tmp_mfcc=librosa.feature.mfcc(self.y,self.sr)
+            tmpp=[None]*20
+            for i in range(20):
+                tmpp[i]=np.average(tmp_mfcc[i])
+
+            features_add[18:38] =  np.array(tmpp)
+
+
+            #Calculate and add var mfcc
+            tmpp=[None]*20
+            for i in range(20):
+                tmpp[i]=np.var(tmp_mfcc[i])
+
+            features_add[99:119] = np.array(tmpp)
+
+
+            #MFCC derivative
+            #Reference --> Bilal's code
+
+            mfcc_col_size = len(tmp_mfcc[0])
+            mfcc_derivative = np.empty([20, mfcc_col_size], dtype=float)
+            #First columns initialized to 0
+            for i in range(20):
+                mfcc_derivative[i][0] = 0
+            #Calculating derivative and filling matrix
+            for i in range(20):
+                for j in range(1, mfcc_col_size):
+                    mfcc_derivative[i][j] = tmp_mfcc[i][j] - tmp_mfcc[i][j-1]
+
+
+            #Add mfcc derivative avg and var
+            mfcc_derivative_avgs_stds = np.empty(2*20, dtype=float)
+            j=0
+            for i in range(20):
+                mfcc_derivative_avgs_stds[j] = np.average(mfcc_derivative[i])
+                mfcc_derivative_avgs_stds[j+1] = np.var(mfcc_derivative[i])
+                j = j+2
+
+            features_add[131:171] = np.array(mfcc_derivative_avgs_stds)
+
+
+            newsec = time.time()
+            print("Thread4 is done! Time: ",newsec-seconds)
+
+
+        elif self.feature_name == "ChromaSTFT":
+            seconds = time.time()
+            print("Thread5 is processing...")
+
+            #calculate and add avg chroma_stft
+            tmp_chroma_stft=librosa.feature.chroma_stft(self.y,self.sr)
+            tmpp=[None]*12
+            for i in range(12):
+                tmpp[i]=np.average(tmp_chroma_stft[i])
+
+            features_add[38:50] = np.array(tmpp)
+
+
+            #calculate and add var chroma stft
+            tmpp=[None]*12
+            for i in range(12):
+                tmpp[i]=np.var(tmp_chroma_stft[i])
+
+            features_add[119:131] = np.array(tmpp)
+
+            newsec = time.time()
+            print("Thread5 is done! Time: ",newsec-seconds)
+
+
+
+        elif self.feature_name == "HPCPandGFCC":
+            seconds = time.time()
+            print("Thread1 is processing...")
+            features, features_frames = es.MusicExtractor(lowlevelStats=['mean', 'stdev'],
+                                                          tonalStats=['mean', 'stdev'])(self.song_name)
+
+
+
+
+            #calculate and add avg gfcc
+            features_add[50:63] = features["lowlevel.gfcc.mean"]
+
+
+            #calculate and add avg HPCP
+            features_add[63:99] = features["tonal.hpcp.mean"]
+
+            newsec = time.time()
+            print("Thread1 is done! Time: ",newsec-seconds)
+
+
+        else:
+            seconds = time.time()
+            print("Thread2 is processing...")
+            threads = []
+            y,sr = librosa.load(self.song_name)
+
+            thread3 = FeatureExtraction(feature_name="LowLevel", song_name=None, y=y, sr=sr)
+            threads.append(thread3)
+            thread4 = FeatureExtraction(feature_name="MFCC", song_name=None, y=y, sr=sr)
+            threads.append(thread4)
+            thread5 = FeatureExtraction(feature_name="ChromaSTFT", song_name=None, y=y, sr=sr)
+            threads.append(thread5)
+
+
+            for init_thread in threads:
+                init_thread.start()
+
+            for init_thread in threads:
+                init_thread.join()
+
+            newsec = time.time()
+            print("Thread2 is done! Time: ",newsec-seconds)
 
 if __name__ == '__main__':
 
-    multiprocessing.freeze_support()
+    #multiprocessing.freeze_support()
+
 
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
+    tempdict= ui.__dict__  #Then look at this variable under the Variable explorer
     MainWindow.show()
     sys.exit(app.exec_())
